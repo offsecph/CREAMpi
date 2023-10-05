@@ -221,6 +221,13 @@ nmcli con up eth0
 nmcli con del "Ifupdown (eth0)"
 ```
 
+Enabling and starting the services
+
+```bash
+systemctl enable --now callhome.service \
+systemctl enable --now callhome-persistence.timer
+```
+
 Disabling auto sleep / hibernate
 
 ```sh
