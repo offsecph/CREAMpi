@@ -1,6 +1,6 @@
 # C.R.E.AMpi - Raspberry pi kali dropbox
 ---
- **C.R.E.A.M.pi** is short for (Cyber Reconnaissance and Exploitation Analysis Module Pi) is a Raspberry pi 4B is a pentest dropbox which will be shipped to the customer / client. C.R.E.A.M.pi will either connect from an ethernet port where it is connected from the client's network (in band connection) or over a Wifi network which we control (out of band connection). C.R.E.A.M.pi will automatically connect to the server hosted on the cloud which we control.
+ **C.R.E.A.M.pi** is short for (Cyber Reconnaissance and Exploitation Analysis Module Pi) is a Raspberry pi 4B is a pentest dropbox which will be shipped to the customer / client. C.R.E.A.M.pi will either connect from an ethernet port where it is connected from the client's network (in band connection) or over a portable Wifi network (out of band connection). C.R.E.A.M.pi will automatically connect to the server hosted on the cloud which we control.
 
 ---
 ```
