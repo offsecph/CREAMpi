@@ -1,4 +1,4 @@
-# C.R.E.AMpi - Raspberry pi kali dropbox
+# C.R.E.A.M.pi - Raspberry pi kali dropbox
 ---
  **C.R.E.A.M.pi** is short for (Cyber Reconnaissance and Exploitation Analysis Module Pi) is a Raspberry pi 4B is a pentest dropbox which will be shipped to the customer / client. C.R.E.A.M.pi will either connect from an ethernet port where it is connected from the client's network (in band connection) or over a portable Wifi network (out of band connection). C.R.E.A.M.pi will automatically connect to the server hosted on the cloud which we control.
 
@@ -31,18 +31,19 @@ Required software:
 - Balena etcher / Rufus
 
 Note:
- Installation of kali over the internet using ethernet cable can be done if the pi is fresh out of the box.
+ Installation of kali over the internet using ethernet cable can be done if the MicroSD is fresh from the box.
+ 
 ---
-##### Install kali via SD card
+##### Install kali via MicroSD card
 
 - Download kali image on https://www.kali.org/get-kali/#kali-arm make sure to install the 64bit version on raspberry pi 4b,
 - Download balena etcher portable flasher tool https://etcher.balena.io/
-- Flash the kali image on the SD card via USB card reader
+- Flash the kali image on the MicroSD card via USB card reader
 - Install the SD Card on pi
 
 ##### Install kali via Ethernet port
-- Format the SD card to FAT32
-- Plug the SD Card on the pi
+- Format the MicroSD card to FAT32/EXFat if 128gb or higher
+- Plug the MicroSD Card on the pi
 - On the menu, select Operating system and select *Other general-purpose OS*
 - Select Kali Linux (make sure to install 64 bit for raspberry pi 4b)
 ---
@@ -76,9 +77,7 @@ After=network.target
 Type=forking
 User=root
 ExecStart=/opt/scripts/startup/callhome.sh start
-ExecReload=/opt/scripts/startup/callhome.sh restart
-ExecStop=/opt/scripts/startup/callhome.sh stop
-Restart=on-failure
+Restart=always
 RestartSec=5
 
 [Install]
