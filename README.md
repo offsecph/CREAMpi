@@ -290,6 +290,6 @@ C.R.E.A.M.pi has network scripts on scripts directory on the repository. Place t
 
 See custom rpi image of this setup 
 
-[https://github.com/offsecph/kali-custom-arm64-raspberry-pi-img](https://github.com/offsecph/kali-custom-arm64-raspberry-pi-img)
+[https://github.com/offsecph/kali-rpi](https://github.com/offsecph/kali-rpi)
 
 ---
