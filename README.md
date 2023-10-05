@@ -286,4 +286,10 @@ Install the tools required for the test. "git clone" into */opt/tools/web-tools*
 
 C.R.E.A.M.pi has network scripts on scripts directory on the repository. Place them on ***/opt/***
 
+### Custom ARM64 Kali images for Rpi
+
+See custom rpi image of this setup 
+
+[https://github.com/offsecph/kali-custom-arm64-raspberry-pi-img](https://github.com/offsecph/kali-custom-arm64-raspberry-pi-img)
+
 ---
