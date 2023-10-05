@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# disconnect_wlan_nmcli.sh - disconnect droppi to a wireless network
+# 
+# WARNING:
+#   if you are not connected to the ETH interface on the local network,
+#   and you manage the droppi from ssh over wireless, you will get disconnected.
+#
+#   If persist on boot is set to 1, droppi will forget the network and will not
+#   connect on boot.
+#
+# Set the following variables before running the script.
+SSID_NAME=""
+PERSIST_ON_BOOT=0
+WLAN_INTERFACE=wlan0
+
+function check_root {
+  if [ "$(id -u)" != "0" ]; then 
+    echo "This script must be run as root" 1>&2 exit 1
+  fi
+}
+
+function check_wlan_interfaces {
+  WLAN_INTERFACES=()
+  WLAN_INTERFACES+=$(ip route list | grep -v default | awk '{print $3}' | grep w | sort -u)
+
+  if [[ ! ${WLAN_INTERFACES[*]} =~ $WLAN_INTERFACE ]]; then
+    echo "Error on the configuration file.. exiting.."
+    exit
+  else
+    if [[ -z $SSID_NAME ]]; then
+      echo "Error. Supply a valid SSID_NAME"
+      exit
+    fi
+    
+    echo "Disconnecting to target wifi with SSID: $SSID_NAME"..
+    sleep 1.5
+  fi
+
+}
+
+function disconnect_wlan {
+  nmcli con show
+  nmcli con down id "$SSID_NAME"
+  if [ $PERSIST_ON_BOOT == 1 ]; then
+    nmcli con down id "$SSID_NAME"
+    nmcli con delete id "$SSID_NAME"
+  elif [ $PERSIST_ON_BOOT == 0 ]; then
+    nmcli con down id "$SSID_NAME"
+  else
+    echo "Error on ther configuration file.. exiting.."
+    exit 1
+  fi
+  ifconfig $WLAN_INTERFACE
+
+}
+
+function main {
+  check_root
+  check_wlan_interfaces
+  disconnect_wlan
+}
+
+main

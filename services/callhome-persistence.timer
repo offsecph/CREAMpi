@@ -1,0 +1,10 @@
+[Unit]
+Description=C2 Callhome Persistence Service Timer
+
+[Timer]
+OnBootSec=15m
+OnUnitActiveSec=30s
+Unit=callhome.service
+
+[Install]
+WantedBy=default.target
