@@ -233,6 +233,12 @@ Disabling auto sleep / hibernate
 systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 ```
 
+Post installation configuration fixes
+
+```sh
+curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/config.sh | bash
+```
+
 #### Optional:
 
 Installing xrdp
