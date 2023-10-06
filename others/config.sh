@@ -14,8 +14,8 @@ function networkmanager_managed() {
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/NetworkManager.conf -P /etc/NetworkManager/
     systemctl restart NetworkManager
     nmcli con del 'Ifupdown (eth0)'
-    nmcli con mod 'Wired Connection' connection.id 'eth0'
-    nmcli con up 'Wired Connection'
+    nmcli con mod 'Wired Connection 1' connection.id 'eth0'
+    nmcli con up 'Wired Connection 1'
 }
 
 function main() {
