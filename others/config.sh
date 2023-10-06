@@ -22,9 +22,17 @@ function networkmanager_managed() {
     fi
 }
 
+function add_motd() {
+    mv -v /etc/motd /etc/motd.bak
+    wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/motd -P /etc/
+}
+
 function main() {
     status '[*] Fixing NetworkManager to managed mode..'
     networkmanager_managed
+    status '\n[+] Done.'
+    status '[*] Adding motd..'
+    add_motd
     status '\n[+] Done.'
 }
 
