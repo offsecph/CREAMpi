@@ -10,12 +10,12 @@ function status() {
 }
 
 function networkmanager_managed() {
-    rm -rf /etc/NetworkManager/NetworkManager.conf
+    rm -rfv /etc/NetworkManager/NetworkManager.conf
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/NetworkManager.conf -P /etc/NetworkManager/
     systemctl restart NetworkManager
     nmcli con del 'Ifupdown (eth0)'
-    nmcli con mod 'Wired Connection 1' connection.id 'eth0'
-    nmcli con up 'Wired Connection 1'
+    nmcli con add con-name 'eth0' ifname eth0 type ethernet
+    nmcli con up 'eth0'
 }
 
 function main() {
