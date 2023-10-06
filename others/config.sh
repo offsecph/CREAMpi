@@ -14,8 +14,6 @@ function networkmanager_managed() {
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/NetworkManager.conf -P /etc/NetworkManager/
     systemctl restart NetworkManager
     nmcli con del 'Ifupdown (eth0)'
-    nmcli con add con-name 'eth0' ifname eth0 type ethernet
-    nmcli con up 'eth0'
 }
 
 function main() {
