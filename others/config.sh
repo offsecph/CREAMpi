@@ -14,7 +14,12 @@ function networkmanager_managed() {
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/NetworkManager.conf -P /etc/NetworkManager/
     systemctl restart NetworkManager
     nmcli con del 'Ifupdown (eth0)'
-    nmcli con show | tail -n1 | awk '{print $2}' | xargs -I % nmcli con del %
+    if [[ `nmcli con show | tail -n1 | cut -d' ' -f1` != eth0 ]] \
+        || [[ `nmcli con show | tail -n1 | cut -d' ' -f1` != 'Ifupdown (eth0)' ]]; then
+        :
+    else
+        nmcli con show | tail -n1 | awk '{print $2}' | xargs -I % nmcli con del %
+    fi
 }
 
 function main() {
