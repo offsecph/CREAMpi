@@ -37,7 +37,7 @@ function main() {
     status '[*] Fixing post installation configuration'
     networkmanager_managed
     add_motd
-    add_ip_table_rules
+    add_iptable_rules
     status '\n[+] Done.'
 }
 
