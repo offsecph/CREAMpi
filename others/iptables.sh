@@ -28,7 +28,6 @@ function configure_iptables() {
 function enable_iptables_persistence() {
     mkdir -p /etc/iptables/ 2>/dev/null
     iptables-save > /etc/iptables/rules.v4
-    systemctl enable --now iptables-persistent.service
 }
 
 function main {
