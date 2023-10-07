@@ -15,7 +15,7 @@ function status() {
     echo -e "$@"
 }
 
-function networkmanager_managed() {
+function configure_networkmanager() {
     rm -rfv /etc/NetworkManager/NetworkManager.conf
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/NetworkManager.conf -P /etc/NetworkManager/
     systemctl restart NetworkManager
@@ -28,12 +28,12 @@ function networkmanager_managed() {
     fi
 }
 
-function add_motd() {
+function configure_motd() {
     mv -v /etc/motd /etc/motd.bak
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/motd -P /etc/
 }
 
-function add_iptable_rules() {
+function configure_iptables() {
     curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
     systemctl enable --now iptables-persistent.service
@@ -44,12 +44,26 @@ function configure_sshd() {
     systemctl restart ssh
 }
 
+function configure_timesyncd() {
+    timedatectl set-timezone "Asia/Manila"
+    timedatectl set-ntp true
+    systemctl enable --now systemd-timesyncd
+}
+
+function configure_resolved() {
+    sed -e -i s'/#DNS=/DNS=1.1.1.1 9.9.9.9/' /etc/systemd/resolved.conf
+    sed -e -i s'/#Domains/Domains=dns.cloudflare.com dns.quad9.net/' /etc/systemd/resolved.conf
+    systemctl enable --now systemd-resolved
+}
+
 function main() {
     status '[*] Fixing post installation configuration'
     configure_sshd
-    networkmanager_managed
-    add_motd
-    add_iptable_rules
+    configure_timesyncd
+    configure_resolved
+    configure_networkmanager
+    configure_motd
+    configure_iptables
     status '\n[+] Done.'
 }
 
