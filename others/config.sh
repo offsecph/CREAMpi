@@ -46,10 +46,10 @@ function configure_sshd() {
 
 function main() {
     status '[*] Fixing post installation configuration'
+    configure_sshd
     networkmanager_managed
     add_motd
     add_iptable_rules
-    configure_sshd
     status '\n[+] Done.'
 }
 
