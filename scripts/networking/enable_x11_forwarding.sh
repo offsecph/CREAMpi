@@ -12,6 +12,9 @@
 # - some gui apps will take some time to load..
 # - for testing, if X11 forwarding is enabled, use `xeyes`
 # - if .Xauthority seems untrusted, use ssh -Y instead of -X
+#
+# WARNING:
+# - x11 forwarding cannot be enabled if system does not have desktop environment installed
 
 function enable_x11 {
   echo "Setting up X11 forwarding on $HOSTNAME.."
