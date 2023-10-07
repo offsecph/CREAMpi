@@ -49,6 +49,7 @@ function main() {
     networkmanager_managed
     add_motd
     add_iptable_rules
+    configure_sshd
     status '\n[+] Done.'
 }
 
