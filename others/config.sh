@@ -27,12 +27,16 @@ function add_motd() {
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/motd -P /etc/
 }
 
+function add_iptable_rules() {
+    curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
+    systemctl enable --now iptables
+}
+
 function main() {
-    status '[*] Fixing NetworkManager to managed mode..'
+    status '[*] Fixing post installation configuration'
     networkmanager_managed
-    status '\n[+] Done.'
-    status '[*] Adding motd..'
     add_motd
+    add_ip_table_rules
     status '\n[+] Done.'
 }
 
