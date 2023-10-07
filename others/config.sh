@@ -5,6 +5,12 @@
 
 # Fix eth0 to managed mode
 
+
+if [ "$EUID" -ne 0 ] ;then
+    echo "Please download and run this script as root"
+    exit 1
+fi
+
 function status() {
     echo -e "$@"
 }
@@ -31,6 +37,11 @@ function add_iptable_rules() {
     curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
     systemctl enable --now iptables-persistent.service
+}
+
+function configure_sshd() {
+    sed -i -e 's/PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
+    systemctl restart ssh
 }
 
 function main() {
