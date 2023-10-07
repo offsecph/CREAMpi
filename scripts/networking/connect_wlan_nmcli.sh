@@ -17,7 +17,7 @@ function check_root {
 
 function check_wlan_interfaces {
   WLAN_INTERFACES=()
-  WLAN_INTERFACES+=$(ip route list | grep -v default | awk '{print $3}' | grep w | sort -u)
+  WLAN_INTERFACES+=$(ip a | grep w | awk '{print $2}' | sed s'/.$//' | sort -u)
 
   if [[ ! ${WLAN_INTERFACES[*]} =~ $WLAN_INTERFACE ]]; then
     echo "Error on the configuration file.. exiting.."
