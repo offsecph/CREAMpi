@@ -15,6 +15,23 @@ function status() {
     echo -e "$@"
 }
 
+function configure_sshd() {
+    sed -i -e 's/PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
+    systemctl restart ssh
+}
+
+function configure_timesyncd() {
+    timedatectl set-timezone "Asia/Manila"
+    timedatectl set-ntp true
+    systemctl enable --now systemd-timesyncd
+}
+
+function configure_resolved() {
+    sed -e -i s'/#DNS=/DNS=1.1.1.1 9.9.9.9/' /etc/systemd/resolved.conf
+    sed -e -i s'/#Domains/Domains=dns.cloudflare.com dns.quad9.net/' /etc/systemd/resolved.conf
+    systemctl enable --now systemd-resolved
+}
+
 function configure_networkmanager() {
     rm -rfv /etc/NetworkManager/NetworkManager.conf
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/NetworkManager.conf -P /etc/NetworkManager/
@@ -33,27 +50,15 @@ function configure_motd() {
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/motd -P /etc/
 }
 
+function configure_raspitools() {
+    pip install setuptools
+    pip install git+https://github.com/nicmcd/vcgencmd.git
+}
+
 function configure_iptables() {
     curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
     systemctl enable --now iptables-persistent.service
-}
-
-function configure_sshd() {
-    sed -i -e 's/PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
-    systemctl restart ssh
-}
-
-function configure_timesyncd() {
-    timedatectl set-timezone "Asia/Manila"
-    timedatectl set-ntp true
-    systemctl enable --now systemd-timesyncd
-}
-
-function configure_resolved() {
-    sed -e -i s'/#DNS=/DNS=1.1.1.1 9.9.9.9/' /etc/systemd/resolved.conf
-    sed -e -i s'/#Domains/Domains=dns.cloudflare.com dns.quad9.net/' /etc/systemd/resolved.conf
-    systemctl enable --now systemd-resolved
 }
 
 function main() {
@@ -63,6 +68,7 @@ function main() {
     configure_resolved
     configure_networkmanager
     configure_motd
+    configure_raspitools
     configure_iptables
     status '\n[+] Done.'
 }
