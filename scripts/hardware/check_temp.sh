@@ -4,10 +4,15 @@
 #
 
 function main {
-  echo "Checking $HOSTNAME's temperature:"
-  for x in `seq 1 10`
+  for x in `seq 1 60`
     do
-      vcgencmd measure_temp | cut -d'=' -f2
+      clear
+      echo -e "\nChecking $HOSTNAME's temperature:\n"
+      echo " --------------------------------- "
+      echo "| Temp   | Count (s) | Total Time |"
+      echo " --------------------------------- "
+      echo -e "| `vcgencmd measure_temp | cut -d'=' -f2` |    $x     | 1 minute   |"
+      echo " --------------------------------- "
       sleep 1
     done
 }
