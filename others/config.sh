@@ -29,7 +29,7 @@ function add_motd() {
 
 function add_iptable_rules() {
     curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
-    wget https://raw.githubusercontent.cm/offsecph/CREAMpi/master/others/iptables-persistent.service -P /etc/systemd/system
+    wget https://raw.githubusercontent.cm/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
     systemctl enable --now iptables-persistent.service
 }
 
