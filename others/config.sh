@@ -109,6 +109,9 @@ function configure_raspitools() {
         pip install setuptools
         pip install git+https://github.com/nicmcd/vcgencmd.git
     fi
+    if [ -f /usr/games/lolcat ]; then
+        mv -vf /usr/games/lolcat /usr/bin
+    fi
 }
 
 function configure_iptables() {
