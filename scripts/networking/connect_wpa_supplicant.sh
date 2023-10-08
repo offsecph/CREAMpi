@@ -23,6 +23,7 @@ function exec_start {
 }
 
 function main {
+  check_root
   exec_start; sleep 1.5
   rfkill list $(rfkill list | grep Wireless | awk -F: {'print $1'})
   rfkill unblock wifi
@@ -33,7 +34,8 @@ function main {
   ifconfig $WLAN_INTERFACE
   ping -c 1 google.com
   sleep 1 
-  systemctl stop callhome
+  systemctl stop callhome && sleep 5
+  systemctl start callhome
 }
 
 check_root

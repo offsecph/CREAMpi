@@ -6,6 +6,12 @@
 #
 INTERFACE=wlan0
 
+function check_root {
+  if [ "$(id -u)" != "0" ]; then
+    echo "This script must be run as root" 1>&2 exit 1
+  fi
+}
+
 function check_interfaces {
   INTERFACES=()
   INTERFACES+=$(ip route list | grep -v default | awk '{print $3}' | sort -u)
@@ -30,6 +36,7 @@ function disable_ipv6 {
 }
 
 function main {
+  check_root
   check_interfaces
   disable_ipv6
 }

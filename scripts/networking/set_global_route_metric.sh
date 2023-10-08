@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# set_route_metric.sh - Redirect network packets to specific interface
+# set_global_route_metric.sh - Redirect network packets to specific interface
 #
 #
 # You can set values like disabled on the interface if only one exist.
@@ -19,6 +19,12 @@ INTERFACE_2=eth1
 PRIORITY_1=0
 PRIORITY_2=200
 
+function check_root {
+  if [ "$(id -u)" != "0" ]; then
+    echo "This script must be run as root" 1>&2 exit 1
+  fi
+}
+
 function check_valid_interfaces {
   INTERFACES=("disabled ")
   INTERFACES+=$(ip route list | grep -v default | awk '{print $3}' | sort -u)
@@ -31,7 +37,7 @@ function check_valid_interfaces {
   fi
 }
 
-function set_route_metric {
+function set_global_route_metric {
   if [ $INTERFACE_1 == disabled ] && [ $INTERFACE_2 != disabled ]; then
     INTERFACE_2="$(nmcli -t -f NAME,DEVICE con show | awk -F: "/$INTERFACE_2/ {print $1}" | cut -d: -f1 2>/dev/null)"
     
@@ -66,8 +72,9 @@ function set_route_metric {
 }
 
 function main {
+  check_root
   check_valid_interfaces
-  set_route_metric
+  set_global_route_metric
 }
 
 main

@@ -16,6 +16,12 @@
 # WARNING:
 # - x11 forwarding cannot be enabled if system does not have desktop environment installed
 
+function check_root {
+  if [ "$(id -u)" != "0" ]; then
+    echo "This script must be run as root" 1>&2 exit 1
+  fi
+}
+
 function disable_x11 {
   echo "Disabling X11 forwarding on $HOSTNAME.."
   sed -ie '0,/X11Forwarding yes/s//#X11Forwarding yes/' /etc/ssh/sshd_config
@@ -27,6 +33,7 @@ function disable_x11 {
 }
 
 function main {
+  check_root
   disable_x11
 }
 

@@ -16,6 +16,12 @@
 # WARNING:
 # - x11 forwarding cannot be enabled if system does not have desktop environment installed
 
+function check_root {
+  if [ "$(id -u)" != "0" ]; then
+    echo "This script must be run as root" 1>&2 exit 1
+  fi
+}
+
 function enable_x11 {
   echo "Setting up X11 forwarding on $HOSTNAME.."
   if [[ $(dpkg-query -l xauth | grep ii | cut -d' ' -f3) != 'xauth' ]]; then
@@ -32,6 +38,7 @@ function enable_x11 {
 }
 
 function main {
+  check_root
   enable_x11
 }
 
