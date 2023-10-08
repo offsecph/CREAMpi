@@ -37,7 +37,10 @@ function configure_resolved() {
     if [[ `systemctl list-units --all -t service --full --no-legend "systemd-resolved.service" | sed 's/^\s*//g' | cut -f1 -d' '` != systemd-timesyncd.service ]]; then
         apt-get -qq install -y systemd-resolved
     fi
-    mv -fv /etc/systemd/resolved.conf /etc/systemd/resolved.conf.bak
+    if [ ! -f /etc/systemd/resolved.conf.bak ]; then
+        cp -fv /etc/systemd/resolved.conf /etc/systemd/resolved.conf.bak
+    fi
+    rm -rf /etc/systemd/resolved.conf
     cat > /etc/systemd/resolved.conf << EOF
 #  This file is part of systemd.
 #
@@ -93,7 +96,10 @@ function configure_networkmanager() {
 }
 
 function configure_motd() {
-    mv -v /etc/motd /etc/motd.bak
+    if [ ! -f /etc/motd.bak ]; then  
+        cp -vf /etc/motd /etc/motd.bak
+    fi
+    rm -rf /etc/motd
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/motd -P /etc/
 }
 
@@ -103,9 +109,11 @@ function configure_raspitools() {
 }
 
 function configure_iptables() {
-    curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
-    wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
-    systemctl enable --now iptables-persistent.service
+    if [ ! -f /etc/systemd/iptables-persistent.service ]; then
+        curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
+        wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
+        systemctl enable --now iptables-persistent.service
+    fi
 }
 
 function main() {
