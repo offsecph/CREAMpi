@@ -73,6 +73,7 @@ function configure_iptables() {
 
 function main() {
     status '[*] Fixing post installation configuration'
+    update_system
     configure_sshd
     configure_timesyncd
     configure_resolved
