@@ -15,6 +15,10 @@ function status() {
     echo -e "$@"
 }
 
+function update_system() {
+    apt-get -qq update -y
+}
+
 function configure_sshd() {
     sed -i -e 's/PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
     systemctl restart ssh
