@@ -79,8 +79,7 @@ Domains=dns.cloudflare.com dns.quad9.net
 #StaleRetentionSec=0
 EOF
 
-    systemctl enable systemd-resolved
-    sleep 3
+    systemctl enable systemd-resolved && sleep 2
     systemctl restart systemd-resolved
 }
 
@@ -106,8 +105,10 @@ function configure_motd() {
 }
 
 function configure_raspitools() {
-    pip install setuptools
-    pip install git+https://github.com/nicmcd/vcgencmd.git
+    if [ ! -f /usr/bin/vcgencmd ]; then
+        pip install setuptools
+        pip install git+https://github.com/nicmcd/vcgencmd.git
+    fi
 }
 
 function configure_iptables() {
