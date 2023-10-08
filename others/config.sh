@@ -21,12 +21,18 @@ function configure_sshd() {
 }
 
 function configure_timesyncd() {
+    if [[ `systemctl list-units --all -t service --full --no-legend "systemd-timesyncd.service" | sed 's/^\s*//g' | cut -f1 -d' '` != systemd-timesyncd.service ]]; then
+        apt-get -qq install -y systemd-timesyncd
+    fi
     timedatectl set-timezone "Asia/Manila"
     timedatectl set-ntp true
     systemctl enable --now systemd-timesyncd
 }
 
 function configure_resolved() {
+    if [[ `systemctl list-units --all -t service --full --no-legend "systemd-resolved.service" | sed 's/^\s*//g' | cut -f1 -d' '` != systemd-timesyncd.service ]]; then
+        apt-get -qq install -y systemd-resolved
+    fi
     sed -e -i s'/#DNS=/DNS=1.1.1.1 9.9.9.9/' /etc/systemd/resolved.conf
     sed -e -i s'/#Domains/Domains=dns.cloudflare.com dns.quad9.net/' /etc/systemd/resolved.conf
     systemctl enable --now systemd-resolved
