@@ -1,16 +1,17 @@
 #!/bin/bash
 #
-# disconnect_wlan_nmcli.sh - disconnect droppi to a wireless network
+# disconnect_wlan_nmcli.sh - disconnect CREAMpi to a wireless network
 # 
 # WARNING:
 #   if you are not connected to the ETH interface on the local network,
-#   and you manage the droppi from ssh over wireless, you will get disconnected.
+#   and you manage CREAMpi from ssh over wireless, you will get disconnected.
 #
-#   If persist on boot is set to 1, droppi will forget the network and will not
+#   If persist on boot is set to 1, CREAMpi will forget the network and will not
 #   connect on boot.
 #
 # Set the following variables before running the script.
-SSID_NAME=""
+
+SSID_NAME=''
 PERSIST_ON_BOOT=0
 WLAN_INTERFACE=wlan0
 

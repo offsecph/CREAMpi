@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# connect_wlan_nmcli.sh - connect droppi to a wireless network
-#
+# connect_wlan_nmcli.sh - connect CREAMpi to a wireless network
 #
 # Set the following variables before running the script.
+
 SSID_NAME=''
 SSID_PASSPHRASE=''
 WLAN_INTERFACE=wlan0
@@ -35,6 +35,7 @@ function check_wlan_interfaces {
 }
 
 function connect_wlan {
+  systemctl unmask wpa_supplicant
   rfkill list $(rfkill list | grep Wireless | awk -F: {'print $1'})
   rfkill unblock wifi
   nmcli radio wifi
@@ -48,7 +49,7 @@ function connect_wlan {
 }
 
 function reconnect_c2 {
-  systemctl stop callhome.service && sleep 5
+  systemctl stop callhome.service && sleep 3
   systemctl start callhome.service
 }
 

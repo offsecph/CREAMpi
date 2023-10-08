@@ -1,15 +1,22 @@
 #!/bin/bash
 #
-# wpa_supplicant.sh - connect droppi to a wireless network (deprecated)
-# Note: wpa_supplicant is not persistent on reboots. 
-# you must create a service to make it persist on boot.
+# connect_wpa_supplicant.sh - connect CREAMpi to a wireless network (deprecated)
 #
 # wpa_supplicant configuration is superseded by network manager.
-# it is advisable to run the wlan_nmcli.sh instead.
+# it is advisable to run the connect_wlan_nmcli.sh instead.
+#
+# NOTE: wpa_supplicant is not persistent on reboots and service will fail.
+#       you must use one network service will work at a time.
+#       If you are using systemd networkmanager, kill the networkmanager daemon and
+#       try again. This tool is DEPRECATED, use connect_wlan_nmcli.sh instead.
+#
+# WARNING: THIS SCRIPT MAY BREAK NETWORKMANAGER SCRIPTS and SERVICES.
+#          USE connect_wlan_nmcli.sh INSTEAD!
 #
 # Set the following variables before running the script.
-SSID_NAME=""
-SSID_PASSPHRASE=""
+
+SSID_NAME=''
+SSID_PASSPHRASE=''
 WLAN_INTERFACE=wlan0
 
 function check_root {
@@ -18,25 +25,67 @@ function check_root {
   fi
 }
 
+function create_services {
+  if [ -f /etc/sytemd/system/dhclient.service ]; then
+    :
+  else
+    cat > /etc/systemd/system/dhclient.service << EOF
+[Unit]
+Description= DHCP Client
+Before=network.target
+
+[Service]
+Type=forking
+ExecStart=/sbin/dhclient $WLAN_INTERFACE -v
+ExecStop=/sbin/dhclient $WLAN_INTERFACE -r
+Restart=always
+
+[Install]
+WantedBy=default.target
+EOF
+  fi
+}
+
 function exec_start {
   echo "Connecting to target wifi with SSID: $SSID_NAME"..
+  sleep 1.5
+}
+
+
+function connect_wpa_supplicant {
+  rfkill list $(rfkill list | grep Wireless | awk -F: {'print $1'})
+  rfkill unblock wifi
+  wpa_passphrase "$SSID_NAME" "$SSID_PASSPHRASE" > /etc/wpa_supplicant/wpa_supplicant.conf
+  sed -ie '/#psk/d' /etc/wpa_supplicant/wpa_supplicant.conf
+  wpa_supplicant -B -c /etc/wpa_supplicant/wpa_supplicant.conf -i $WLAN_INTERFACE
+  dhclient -4 $WLAN_INTERFACE
+  sleep 1 
+}
+
+function enable_services {
+  systemctl daemon-reload
+  systemctl enable wpa_supplicant.service \
+    dhclient.service &
+  systemctl start wpa_supplicant.service \
+    dhclient.service &
+  systemctl status wpa_supplicant.service \
+    dhclient.service --no-pager 
+  sleep 1
+  ifconfig $WLAN_INTERFACE
+}
+
+function reconnect_c2 {
+  systemctl stop callhome && sleep 3
+  systemctl start callhome
 }
 
 function main {
   check_root
-  exec_start; sleep 1.5
-  rfkill list $(rfkill list | grep Wireless | awk -F: {'print $1'})
-  rfkill unblock wifi
-  wpa_passphrase "$SSID_NAME" "$SSID_PASSPHRASE" | tee /etc/wpa_supplicant/wpa_supplicant.conf
-  sed -ie '/#psk/d' /etc/wpa_supplicant/wpa_supplicant.conf
-  wpa_supplicant -c /etc/wpa_supplicant/wpa_supplicant.conf -i $WLAN_INTERFACE
-  dhclient -4 $WLAN_INTERFACE
-  ifconfig $WLAN_INTERFACE
-  ping -c 1 google.com
-  sleep 1 
-  systemctl stop callhome && sleep 5
-  systemctl start callhome
+  create_services
+  exec_start
+  connect_wpa_supplicant
+  enable_services
+  reconnect_c2
 }
 
-check_root
 main
