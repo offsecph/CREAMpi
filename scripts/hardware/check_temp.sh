@@ -3,7 +3,13 @@
 # Checks the temperature of raspberry pi for 30 seconds
 #
 
-function main {
+function check_root {
+  if [ "$(id -u)" != "0" ]; then 
+    echo "This script must be run as root" 1>&2 exit 1
+  fi
+}
+
+function run_temp_loop {
   for x in `seq 1 60`
     do
       clear
@@ -15,6 +21,11 @@ function main {
       echo " --------------------------------- "
       sleep 1
     done
+}
+
+function main {
+    check_root
+    run_temp_loop
 }
 
 main
