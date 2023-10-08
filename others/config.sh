@@ -79,7 +79,7 @@ Domains=dns.cloudflare.com dns.quad9.net
 #StaleRetentionSec=0
 EOF
 
-    systemctl enable --now systemd-resolved && sleep 3
+    systemctl enable systemd-resolved && sleep 3
     systemctl restart systemd-resolved
 }
 
