@@ -41,7 +41,7 @@ function connect_wlan {
   nmcli radio wifi
   nmcli radio wifi on
   nmcli radio wifi
-  nmcli dev wifi list; sleep 1
+  nmcli dev wifi list | /usr/games/lolcat
   nmcli dev wifi connect $SSID_NAME password "$SSID_PASSPHRASE" && sleep 1.5
   nmcli con show
   ifconfig $WLAN_INTERFACE
