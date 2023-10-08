@@ -43,7 +43,8 @@ function TIMESTAMP {
 
 function c2_cleanup {
   echo "[`TIMESTAMP`] Cleaning up process.. " >> $LOG_DIR; sleep 2
-  ps aux | grep "ssh -L" | head -n1 | awk '{print $2}' | xargs -I % kill -9 %  
+  ps aux | grep "ssh -L" | head -n1 | awk '{print $2}' | xargs -I % kill -9 %
+  sleep 3
 }
 
 function c2_callhome {
