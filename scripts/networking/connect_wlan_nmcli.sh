@@ -49,8 +49,10 @@ function connect_wlan {
 }
 
 function reconnect_c2 {
-  systemctl stop callhome.service && sleep 3
-  systemctl start callhome.service
+  if [ `systemctl is-active callhome` == "active" ] || [ `systemctl is-active callhome` == "failed" ]; then
+    systemctl stop callhome.service && sleep 3
+    systemctl start callhome.service
+  fi
 }
 
 function main {
