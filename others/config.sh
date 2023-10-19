@@ -30,7 +30,6 @@ function configure_timesyncd() {
     fi
     timedatectl set-timezone "Asia/Manila"
     timedatectl set-ntp true
-    systemctl enable --now systemd-timesyncd
 }
 
 function configure_resolved() {
@@ -78,9 +77,6 @@ Domains=dns.cloudflare.com dns.quad9.net
 #ResolveUnicastSingleLabel=no
 #StaleRetentionSec=0
 EOF
-
-    systemctl enable systemd-resolved && sleep 2
-    systemctl restart systemd-resolved
 }
 
 function configure_networkmanager() {
@@ -118,8 +114,14 @@ function configure_iptables() {
     if [ ! -f /etc/systemd/iptables-persistent.service ]; then
         curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
         wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
-        systemctl enable --now iptables-persistent.service
     fi
+}
+
+function enable_services() {
+    systemctl enable systemd-resolved && sleep 2
+    systemctl restart systemd-resolved
+    systemctl enable --now systemd-timesyncd
+    systemctl enable --now iptables-persistent.service
 }
 
 function main() {
@@ -132,6 +134,7 @@ function main() {
     configure_motd
     configure_raspitools
     configure_iptables
+    enable_services
     status '\n[+] Done.'
 }
 
