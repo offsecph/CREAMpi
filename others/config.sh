@@ -82,7 +82,6 @@ EOF
 function configure_networkmanager() {
     rm -rfv /etc/NetworkManager/NetworkManager.conf
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/NetworkManager.conf -P /etc/NetworkManager/
-    systemctl restart NetworkManager
     nmcli con del 'Ifupdown (eth0)'
     if [[ `nmcli con show | tail -n1 | cut -d' ' -f1` != eth0 ]] \
         || [[ `nmcli con show | tail -n1 | cut -d' ' -f1` != 'Ifupdown (eth0)' ]]; then
@@ -122,6 +121,7 @@ function enable_services() {
     systemctl restart systemd-resolved
     systemctl enable --now systemd-timesyncd
     systemctl enable --now iptables-persistent.service
+    systemctl restart NetworkManager
 }
 
 function main() {
