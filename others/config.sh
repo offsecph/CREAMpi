@@ -112,7 +112,9 @@ function configure_raspitools() {
 function configure_iptables() {
     if [ ! -f /etc/systemd/iptables-persistent.service ]; then
         curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
-        wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
+        if [ ! -f /etc/systemd/iptables-persitent.service ]; then
+            wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
+        fi
     fi
 }
 
