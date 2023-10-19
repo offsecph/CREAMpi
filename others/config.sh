@@ -65,8 +65,8 @@ function configure_resolved() {
 DNS=1.1.1.1 9.9.9.9
 FallbackDNS=8.8.8.8
 Domains=dns.cloudflare.com dns.quad9.net dns.google
-#DNSSEC=no
-#DNSOverTLS=no
+DNSSEC=yes
+DNSOverTLS=yes
 #MulticastDNS=yes
 #LLMNR=yes
 #Cache=yes
