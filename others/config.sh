@@ -15,7 +15,7 @@ function status() {
     echo -e "$@"
 }
 
-function update_system() {
+function configure_system() {
     apt-get -qq update -y
 }
 
@@ -128,9 +128,9 @@ function enable_services() {
 
 function main() {
     status '[*] Fixing post installation configuration'
-    update_system
-    configure_sshd
     configure_timesyncd
+    configure_system
+    configure_sshd
     configure_resolved
     configure_networkmanager
     configure_motd
