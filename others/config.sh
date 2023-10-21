@@ -130,7 +130,7 @@ function enable_services() {
 }
 
 function main() {
-    status '[*] Fixing post installation configuration'
+    status '[*] Fixing post installation configuration.. this may take a while.'
     configure_timesyncd
     configure_system
     configure_sshd
