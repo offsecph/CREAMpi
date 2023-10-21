@@ -39,15 +39,18 @@ function configure_timesyncd() {
 function configure_resolved() {
     if [[ `systemctl list-units --all -t service --full --no-legend "systemd-resolved.service" | sed 's/^\s*//g' | cut -f1 -d' '` != systemd-timesyncd.service ]]; then
         apt-get -qq install -y systemd-resolved
+        apt remove -y resolvconf
     fi
     if [ ! -f /etc/systemd/resolved.conf.bak ]; then
         cp -fv /etc/systemd/resolved.conf /etc/systemd/resolved.conf.bak
     fi
     sed -r -i "s/#DNS=/DNS=1.1.1.1/" /etc/systemd/resolved.conf
     sed -r -i "s/#FallbackDNS=/FallbackDNS=9.9.9.9/" /etc/systemd/resolved.conf
-    sed -r -i "s/#Domains=/Domains=cloudflare-dns.com dns.quad9.net/" /etc/systemd/resolved.conf
+    sed -r -i "s/#Domains=/Domains=dns.cloudflare.com dns.quad9.net/" /etc/systemd/resolved.conf
     sed -r -i "s/#DNSSEC=no/DNSSEC=yes/" /etc/systemd/resolved.conf
     sed -r -i "s/#DNSOverTLS=no/DNSOverTLS=yes/" /etc/systemd/resolved.conf
+
+    apt remove -y resolvconf
 }
 
 function configure_networkmanager() {
@@ -90,7 +93,7 @@ function configure_iptables() {
 }
 
 function enable_services() {
-    systemctl enable systemd-resolved && sleep 5
+    systemctl enable systemd-resolved && sleep 3
     systemctl restart systemd-resolved
     systemctl enable --now iptables-persistent.service
     systemctl restart NetworkManager
