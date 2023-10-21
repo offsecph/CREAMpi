@@ -28,8 +28,12 @@ function configure_timesyncd() {
     if [[ `systemctl list-units --all -t service --full --no-legend "systemd-timesyncd.service" | sed 's/^\s*//g' | cut -f1 -d' '` != systemd-timesyncd.service ]]; then
         apt-get -qq install -y systemd-timesyncd
     fi
-    timedatectl set-timezone "Asia/Manila"
+    
+    sed -r -i "s/#NTP=/NTP=`curl -s https://www.ntppool.org/zone/tw | grep -E 'server\ ' | head -n1 | sed 's/\t//'g | cut -d' ' -f5`/" /etc/systemd/timesyncd.conf
+    sed -r -i  's/#FallbackNTP=/FallbackNTP=/' /etc/systemd/timesyncd.conf
+    timedatectl set-timezone "Asia/Taipei"
     timedatectl set-ntp true
+    systemctl enable --now systemd-timesyncd
 }
 
 function configure_resolved() {
@@ -121,7 +125,6 @@ function configure_iptables() {
 function enable_services() {
     systemctl enable systemd-resolved && sleep 2
     systemctl restart systemd-resolved
-    systemctl enable --now systemd-timesyncd
     systemctl enable --now iptables-persistent.service
     systemctl restart NetworkManager
 }
