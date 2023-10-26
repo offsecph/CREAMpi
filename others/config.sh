@@ -145,7 +145,7 @@ function configure_lcd() {
 }
 
 function main() {
-    status '[*] Installing post installation configuration.. this may take a while.\n'
+    status '[*] Installing other post-install configurations.. this may take a while.\n'
     configure_timesyncd
     configure_system
     configure_sshd
