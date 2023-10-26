@@ -103,7 +103,7 @@ function configure_iptables_knockd() {
         apt-get install knockd -y
     fi
 
-    # Configure Knockd (6700,6800,6900) sequence timeout of 5 seconds
+    # Configure Knockd (69,69,69) sequence timeout of 5 seconds
     if [ ! -f /etc/knockd.conf.bak ]; then
         cp -fv /etc/knockd.conf /etc/knockd.conf.bak
     fi
@@ -112,8 +112,8 @@ function configure_iptables_knockd() {
         cp -fv /etc/default/knockd /etc/default/knockd.bak
     fi
     
-    sed -r -i s'/sequence    = 7000,8000,9000/sequence    = 6700,6800,6900/'g /etc/knockd.conf
-    sed -r -i s'/sequence    = 9000,8000,7000/sequence    = 6900,6800,6700/'g /etc/knockd.conf
+    sed -r -i s'/sequence    = 7000,8000,9000/sequence    = 69,69,69/'g /etc/knockd.conf
+    sed -r -i s'/sequence    = 9000,8000,7000/sequence    = 96,96,96/'g /etc/knockd.conf
     sed -r -i s'/\/sbin\/iptables -A/\/sbin\/iptables -I/'g /etc/knockd.conf
     sed -r -i s'/START_KNOCKD=0/START_KNOCKD=1/' /etc/default/knockd
     sed -r -i s"/#KNOCKD_OPTS=\"-i eth1\"/KNOCKD_OPTS=\"-i `ifconfig | grep w | cut -d':' -f1`\"/" /etc/default/knockd
