@@ -93,8 +93,9 @@ function configure_iptables_knockd() {
     
     if [ -f /etc/systemd/system/iptables-persitent.service ]; then
         rm -rf /etc/systemd/system/iptables-persistent.service
-        wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
     fi
+
+    wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
 
     # Check for knockd if installed
     if [ `dpkg -l knockd | grep 'knockd' | cut -d' ' -f3` != 'knockd' ]; then
@@ -114,7 +115,10 @@ function enable_services() {
     systemctl restart systemd-resolved
     systemctl enable --now iptables-persistent.service
     systemctl enable --now knockd.service
+
+    status '\n[*] Restarting network manager..' 
     systemctl restart NetworkManager
+    sleep 8
 }
 
 function configure_lcd() {
@@ -133,7 +137,7 @@ function configure_lcd() {
 }
 
 function main() {
-    status '[*] Fixing post installation configuration.. this may take a while.'
+    status '[*] Fixing post installation configuration.. this may take a while.\n'
     configure_timesyncd
     configure_system
     configure_sshd
