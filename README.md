@@ -247,6 +247,12 @@ Ignore LCD install setup
 curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/config.sh | sed 's/LCD=yes/LCD=no/' | bash
 ```
 
+(Optional) To revert back to HDMI display
+
+```sh
+cd /opt/scripts/hardware/LCD-kali-show && ./LCD-hdmi
+```
+
 ---
 
 ### Optional:
