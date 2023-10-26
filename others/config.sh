@@ -157,7 +157,7 @@ function main() {
     configure_iptables_knockd
     enable_services
     configure_lcd
-    status '\n[+] Done.'
+    status '\n[+] Done..'
 }
 
 main
