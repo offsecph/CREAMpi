@@ -233,13 +233,23 @@ Disabling auto sleep / hibernate
 systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 ```
 
-Post installation configuration fixes
+---
 
+### Post installation configuration fixes
+
+Install LCD (3.5in) - default
 ```sh
 curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/config.sh | bash
 ```
 
-#### Optional:
+Ignore LCD install setup 
+```sh
+curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/config.sh | sed 's/LCD=yes/LCD=no/' | bash
+```
+
+---
+
+### Optional:
 
 Installing xrdp
 
