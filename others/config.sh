@@ -16,7 +16,8 @@ function status() {
 }
 
 function configure_system() {
-    apt-get -qq update -y
+    sleep 3
+    apt-get update -y
 }
 
 function configure_sshd() {
@@ -26,7 +27,7 @@ function configure_sshd() {
 
 function configure_timesyncd() {
     if [[ `systemctl list-units --all -t service --full --no-legend "systemd-timesyncd.service" | sed 's/^\s*//g' | cut -f1 -d' '` != systemd-timesyncd.service ]]; then
-        apt-get -qq install -y systemd-timesyncd
+        apt-get install -y systemd-timesyncd
     fi
     
     sed -r -i "s/#NTP=/NTP=`curl -s https://www.ntppool.org/zone/tw | grep -E 'server\ ' | head -n1 | sed 's/\t//'g | cut -d' ' -f5`/" /etc/systemd/timesyncd.conf
@@ -38,7 +39,7 @@ function configure_timesyncd() {
 
 function configure_resolved() {
     if [[ `systemctl list-units --all -t service --full --no-legend "systemd-resolved.service" | sed 's/^\s*//g' | cut -f1 -d' '` != systemd-timesyncd.service ]]; then
-        apt-get -qq install -y systemd-resolved
+        apt-get install -y systemd-resolved
         apt remove -y resolvconf
     fi
     if [ ! -f /etc/systemd/resolved.conf.bak ]; then
@@ -99,7 +100,7 @@ function configure_iptables_knockd() {
 
     # Check for knockd if installed
     if [[ `dpkg -l knockd | grep 'knockd' | cut -d' ' -f3` != 'knockd' ]]; then
-        apt-get -qq  install knockd -y
+        apt-get install knockd -y
     fi
 
     # Configure Knockd (6700,6800,6900) sequence timeout of 5 seconds
@@ -126,14 +127,14 @@ function enable_services() {
 
     status '\n[*] Restarting network manager..' 
     systemctl restart NetworkManager
-    sleep 20
+    sleep 10
 }
 
 function configure_lcd() {
     # Configure 3.5 inch LCD attached on CREAMpi
     LCD=yes
     if [ ! -d /opt/scripts/hardware/LCD-show-kali ]; then
-        git clone https://github.com/lcdwiki/LCD-show-kali /opt/scripts/hardware
+        git clone https://github.com/lcdwiki/LCD-show-kali /opt/scripts/hardware/LCD-show-kali
         chmod -R 755 /opt/scripts/hardware/LCD-show-kali
     fi
 
