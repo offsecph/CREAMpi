@@ -47,9 +47,7 @@ function configure_resolved() {
     sed -r -i "s/#DNS=/DNS=1.1.1.1/" /etc/systemd/resolved.conf
     sed -r -i "s/#FallbackDNS=/FallbackDNS=9.9.9.9/" /etc/systemd/resolved.conf
     sed -r -i "s/#Domains=/Domains=dns.cloudflare.com dns.quad9.net/" /etc/systemd/resolved.conf
-    sed -r -i "s/#DNSSEC=no/DNSSEC=yes/" /etc/systemd/resolved.conf
-    sed -r -i "s/#DNSOverTLS=no/DNSOverTLS=yes/" /etc/systemd/resolved.conf
-
+    
     apt remove -y resolvconf
 }
 
