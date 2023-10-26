@@ -98,7 +98,7 @@ function configure_iptables_knockd() {
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
 
     # Check for knockd if installed
-    if [ `dpkg -l knockd | grep 'knockd' | cut -d' ' -f3` != 'knockd' ]; then
+    if [[ `dpkg -l knockd | grep 'knockd' | cut -d' ' -f3` != 'knockd' ]]; then
         apt-get -qq  install knockd -y
     fi
 
@@ -126,7 +126,7 @@ function enable_services() {
 
     status '\n[*] Restarting network manager..' 
     systemctl restart NetworkManager
-    sleep 15
+    sleep 20
 }
 
 function configure_lcd() {
