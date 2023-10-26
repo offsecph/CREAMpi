@@ -84,11 +84,11 @@ function configure_raspitools() {
 }
 
 function configure_iptables() {
-    if [ ! -f /etc/systemd/iptables-persistent.service ]; then
-        curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
-        if [ ! -f /etc/systemd/iptables-persitent.service ]; then
-            wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
-        fi
+    curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
+    
+    if [ -f /etc/systemd/system/iptables-persitent.service ]; then
+        rm -rf /etc/systemd/system/iptables-persistent.service
+        wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
     fi
 }
 
@@ -102,8 +102,12 @@ function enable_services() {
 function configure_lcd() {
     # Configure 3.5 inch LCD attached on CREAMpi
     LCD=yes
-    git clone https://github.com/lcdwiki/LCD-show-kali /opt/scripts/hardware
-    chmod -R 755 /opt/scripts/hardware/LCD-show-kali
+    if [ ! -d /opt/scripts/hardware/LCD-show-kali ]; then
+        git clone https://github.com/lcdwiki/LCD-show-kali /opt/scripts/hardware 2
+        chmod -R 755 /opt/scripts/hardware/LCD-show-kali
+    fi
+
+    # run LCD config if set to yes
     if [ ${LCD} == 'yes' ]; then
         /opt/scripts/hardware/LCD35-show
     fi    
