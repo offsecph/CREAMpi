@@ -92,7 +92,7 @@ function configure_raspi() {
 function configure_iptables_knockd() {
     curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
     
-    if [ -f /etc/systemd/system/iptables-persitent.service ]; then
+    if [ -f /etc/systemd/system/iptables-persistent.service ]; then
         rm -rf /etc/systemd/system/iptables-persistent.service
     fi
 
