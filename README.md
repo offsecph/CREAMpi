@@ -119,7 +119,7 @@ Callback script on ***/opt/scripts/startup***
 # i.e. ssh user@153.231.21.50 -i /root/.ssh/id_rsa and will use the tunnel port to create
 # a reverse ssh tunnel to connect back to this host.
 
-# The server which the keycroc will connect to
+# The server which the CREAMpi will connect to
 C2_SERVER="192.168.0.123"
 # Username that will be used to log in to the remote server
 USER="root"
