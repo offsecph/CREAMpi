@@ -237,12 +237,12 @@ systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 
 ### Post installation configuration fixes
 
-Install LCD (3.5in) - default
+To Install LCD (3.5in) - default from the script
 ```sh
 curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/config.sh | bash
 ```
 
-Ignore LCD install setup 
+To Ignore LCD install setup from the script
 ```sh
 curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/config.sh | sed 's/LCD=yes/LCD=no/' | bash
 ```
