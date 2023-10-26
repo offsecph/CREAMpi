@@ -79,28 +79,43 @@ function configure_raspi() {
         pip install setuptools
         pip install git+https://github.com/nicmcd/vcgencmd.git
     fi
+    
     if [ -f /usr/games/lolcat ]; then
         mv -vf /usr/games/lolcat /usr/bin
     fi
-    # Configure hciuart bluetooth (
+    
+    # Configure hciuart bluetooth
     /opt/scripts/hardware/enable_disable_bluetooth.sh &> /dev/null
     # Configure power LED on start up (disable)
     /opt/scripts/hardware/enable_disable_led.sh &> /dev/null
 }
 
-function configure_iptables() {
+function configure_iptables_knockd() {
     curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/iptables.sh | bash
     
     if [ -f /etc/systemd/system/iptables-persitent.service ]; then
         rm -rf /etc/systemd/system/iptables-persistent.service
         wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/services/iptables-persistent.service -P /etc/systemd/system
     fi
+
+    # Check for knockd if installed
+    if [ `dpkg -l knockd | grep 'knockd' | cut -d' ' -f3` != 'knockd' ]; then
+        apt-get -qq  install knockd -y
+    fi
+
+    # Configure Knockd (6700,6800,6900) sequence timeout of 5 seconds
+    sed -r -i s'/sequence    = 7000,8000,9000/sequence    = 6700,6800,6900/'g /etc/knockd.conf
+    sed -r -i s'/sequence    = 9000,8000,7000/sequence    = 6900,6800,6700/'g /etc/knockd.conf
+    sed -r -i s'/\/sbin\/iptables -A/\/sbin\/iptables -I/'g /etc/knockd.conf
+    sed -r -i s'/START_KNOCKD=0/START_KNOCKD=1/' /etc/default/knockd
+    sed -r -i s"/#KNOCKD_OPTS=\"-i eth1\"/KNOCKD_OPTS=\"-i `ifconfig | grep w | cut -d':' -f1`\"/" /etc/default/knockd
 }
 
 function enable_services() {
     systemctl enable systemd-resolved && sleep 3
     systemctl restart systemd-resolved
     systemctl enable --now iptables-persistent.service
+    systemctl enable --now knockd.service
     systemctl restart NetworkManager
 }
 
@@ -128,7 +143,7 @@ function main() {
     configure_networkmanager
     configure_motd
     configure_raspi
-    configure_iptables
+    configure_iptables_knockd
     enable_services
     configure_lcd
     status '\n[+] Done.'
