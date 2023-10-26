@@ -109,7 +109,7 @@ function configure_lcd() {
 
     # run LCD config if set to yes
     if [ ${LCD} == 'yes' ]; then
-        /opt/scripts/hardware/LCD35-show
+        /opt/scripts/hardware/LCD-show-kali/LCD35-show
     fi    
 }
 
