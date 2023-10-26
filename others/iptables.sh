@@ -1,5 +1,5 @@
 #!/bin/bash
-# Configure stateful firewall allow only the SSH tunnel and local class C networks
+# Configure stateful firewall allow only the SSH connection from port knocking sequence (6700, 6800, 6900)
 
 function configure_iptables() {
     iptables -F
@@ -8,15 +8,11 @@ function configure_iptables() {
     iptables -A INPUT -i lo -j ACCEPT
     iptables -A OUTPUT -o lo -j ACCEPT
 
-    # Allow incoming connections from wlan0 and Class C local management
-    iptables -A INPUT -p tcp --dport 22 -m state --state NEW -s 192.168.1.1 -j ACCEPT
-    iptables -A INPUT -p tcp --dport 22 -m state --state NEW -s 192.168.0.1 -j ACCEPT
-    iptables -A INPUT -p tcp --dport 22 -m state --state NEW -s 192.168.0.0/16 -j ACCEPT
-
     # Configure stateful firewall
     iptables -A INPUT -m state --state INVALID -j DROP
     iptables -A OUTPUT -m state --state INVALID -j DROP
 
+    iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
     iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
     iptables -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
