@@ -103,7 +103,7 @@ function configure_lcd() {
     # Configure 3.5 inch LCD attached on CREAMpi
     LCD=yes
     if [ ! -d /opt/scripts/hardware/LCD-show-kali ]; then
-        git clone https://github.com/lcdwiki/LCD-show-kali /opt/scripts/hardware 2
+        git clone https://github.com/lcdwiki/LCD-show-kali /opt/scripts/hardware
         chmod -R 755 /opt/scripts/hardware/LCD-show-kali
     fi
 
