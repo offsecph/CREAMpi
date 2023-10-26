@@ -103,6 +103,14 @@ function configure_iptables_knockd() {
     fi
 
     # Configure Knockd (6700,6800,6900) sequence timeout of 5 seconds
+    if [ ! -f /etc/knockd.conf.bak ]; then
+        cp -fv /etc/knockd.conf /etc/knockd.conf.bak
+    fi
+
+    if [ ! -f /etc/default/knockd.bak ]; then
+        cp -fv /etc/default/knockd /etc/default/knockd.bak
+    fi
+    
     sed -r -i s'/sequence    = 7000,8000,9000/sequence    = 6700,6800,6900/'g /etc/knockd.conf
     sed -r -i s'/sequence    = 9000,8000,7000/sequence    = 6900,6800,6700/'g /etc/knockd.conf
     sed -r -i s'/\/sbin\/iptables -A/\/sbin\/iptables -I/'g /etc/knockd.conf
@@ -118,7 +126,7 @@ function enable_services() {
 
     status '\n[*] Restarting network manager..' 
     systemctl restart NetworkManager
-    sleep 8
+    sleep 15
 }
 
 function configure_lcd() {
