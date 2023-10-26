@@ -109,13 +109,13 @@ function configure_lcd() {
 
     # run LCD config if set to yes
     if [ ${LCD} == 'yes' ]; then
-        /opt/scripts/hardware/LCD-show-kali/LCD35-show
+        cd /opt/scripts/hardware/LCD-show-kali
+        ./LCD35-show
     fi    
 }
 
 function main() {
     status '[*] Fixing post installation configuration.. this may take a while.'
-    configure_lcd
     configure_timesyncd
     configure_system
     configure_sshd
