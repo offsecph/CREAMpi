@@ -101,10 +101,10 @@ function enable_services() {
 
 function configure_lcd() {
     # Configure 3.5 inch LCD attached on CREAMpi
-    opt=yes
+    LCD=yes
     git clone https://github.com/lcdwiki/LCD-show-kali /opt/scripts/hardware
     chmod -R 755 /opt/scripts/hardware/LCD-show-kali
-    if [ ${opt} == 'yes' ]; then
+    if [ ${LCD} == 'yes' ]; then
         /opt/scripts/hardware/LCD35-show
     fi    
 }
