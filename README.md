@@ -253,6 +253,18 @@ curl -sSf https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/confi
 cd /opt/scripts/hardware/LCD-kali-show && ./LCD-hdmi
 ```
 
+Stateful firewall is configured. To access ssh port, knock on the sequence:
+
+```sh
+knock <IP_of_CREAMpi> 69 69 69 -d 500
+```
+
+To close port:
+
+```sh
+knock <IP_of_CREAMpi> 96 96 96 -d 500
+```
+
 ---
 
 ### Optional:
