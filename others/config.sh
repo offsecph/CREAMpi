@@ -73,7 +73,8 @@ function configure_motd() {
     wget https://raw.githubusercontent.com/offsecph/CREAMpi/master/others/motd -P /etc/
 }
 
-function configure_raspitools() {
+function configure_raspi() {
+    # Install raspitools, lolcat
     if [ ! -f /usr/bin/vcgencmd ]; then
         pip install setuptools
         pip install git+https://github.com/nicmcd/vcgencmd.git
@@ -81,6 +82,10 @@ function configure_raspitools() {
     if [ -f /usr/games/lolcat ]; then
         mv -vf /usr/games/lolcat /usr/bin
     fi
+    # Configure hciuart bluetooth (
+    /opt/scripts/hardware/enable_disable_bluetooth.sh &> /dev/null
+    # Configure power LED on start up (disable)
+    /opt/scripts/hardware/enable_disable_led.sh &> /dev/null
 }
 
 function configure_iptables() {
@@ -122,7 +127,7 @@ function main() {
     configure_resolved
     configure_networkmanager
     configure_motd
-    configure_raspitools
+    configure_raspi
     configure_iptables
     enable_services
     configure_lcd
