@@ -99,8 +99,19 @@ function enable_services() {
     systemctl restart NetworkManager
 }
 
+function configure_lcd() {
+    # Configure 3.5 inch LCD attached on CREAMpi
+    opt=yes
+    git clone https://github.com/lcdwiki/LCD-show-kali /opt/scripts/hardware
+    chmod -R 755 /opt/scripts/hardware/LCD-show-kali
+    if [ ${opt} == 'yes' ]; then
+        /opt/scripts/hardware/LCD35-show
+    fi    
+}
+
 function main() {
     status '[*] Fixing post installation configuration.. this may take a while.'
+    configure_lcd
     configure_timesyncd
     configure_system
     configure_sshd
@@ -110,6 +121,7 @@ function main() {
     configure_raspitools
     configure_iptables
     enable_services
+    configure_lcd
     status '\n[+] Done.'
 }
 
