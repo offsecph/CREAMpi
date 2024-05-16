@@ -1,7 +1,0 @@
----
-## -- Provision creampi system configuration --
-
-- import_playbook: system/tasks/apt.yml
-- import_playbook: system/tasks/host-config.yml
-- import_playbook: system/tasks/builtin-scripts.yml
-- import_playbook: system/tasks/misc-config.yml

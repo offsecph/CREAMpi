@@ -46,7 +46,6 @@ cp id_rsa CREAMpi/files/id_rsa
 ```
 2. Set the ovpn file on files directory if openvpn service is going to be used as VPN key file
 ```sh
-mv <file_name.ovpn> dropbox.ovpn
 cp dropbox.ovpn CREAMPi/files/dropbox.ovpn
 ```
 
