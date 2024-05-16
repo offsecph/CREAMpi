@@ -29,6 +29,7 @@
 - import_playbook: sshd.yml
 - import_playbook: timesyncd.yml
 - import_playbook: sshtun.yml
+- import_playbook: vpntun.yml
 #
 ## PT Tools ------
 # Internal pt tools that can be used

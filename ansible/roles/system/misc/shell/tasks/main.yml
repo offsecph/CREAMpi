@@ -1,0 +1,15 @@
+---
+# tasks file for shell
+- name: Ensure that zsh is installed
+  ansible.builtin.apt:
+    name: zsh
+    state: latest
+  register: zsh_result
+
+- name: Change default shell for {{ ansible_user }} on {{ hostname }}
+  ansible.builtin.command: 'usermod -s /usr/bin/zsh {{ ansible_user }}'
+  register: chsh_user_result
+
+- name: Change default shell for root  on {{ hostname }}
+  ansible.builtin.command: 'usermod -s /usr/bin/zsh root'
+  register: chsh_root_result

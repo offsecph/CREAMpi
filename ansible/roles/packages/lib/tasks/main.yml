@@ -1,6 +1,6 @@
 ---
 # tasks file for lib
-  - name: Install development packages on {{ hostname }}
+  - name: Install os library dependecies on {{ hostname }}
     ansible.builtin.apt: 
       name: "{{ item }}" 
       state: latest

@@ -1,8 +1,9 @@
 ---
-# tasks file for netexec
 - name: Download netexec via pipx on {{ hostname }}
   ansible.builtin.shell:
-    cmd: 'pipx install git+https://github.com/Pennyw0rth/NetExec'
+    cmd: |
+      export PATH=$PATH:/root/.cargo/bin &&
+      pipx install git+https://github.com/Pennyw0rth/NetExec
     creates: '{{ netexec_path }}/netexec'
 
 - name: Create a directory for netexec {{ hostname }}

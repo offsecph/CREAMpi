@@ -1,0 +1,19 @@
+---
+# handlers file for vpntun
+- name: Restart script file changes
+  ansible.builtin.service:
+    name: "{{ vpntun_service }}"
+    state: restarted
+  when: tunnel_service == "vpn"
+
+- name: Restart service addon vpntunnel persistence
+  ansible.builtin.service:
+    name: "{{ vpntun_timer }}"
+    state: restarted
+  when: tunnel_service == "vpn"
+
+- name: Restart service addon vpntunnel cleanup service
+  ansible.builtin.service:
+    name: "{{ vpntun_cleanup_service }}"
+    state: restarted
+  when: tunnel_service == "vpn"

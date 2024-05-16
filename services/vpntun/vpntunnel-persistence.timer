@@ -1,0 +1,10 @@
+[Unit]
+Description=OpenVPN Tunnel persistence checker
+
+[Timer]
+OnBootSec=15m
+OnUnitActiveSec=30s
+Unit=vpntunnel.service
+
+[Install]
+WantedBy=default.target

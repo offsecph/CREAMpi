@@ -1,6 +1,6 @@
 ---
 # tasks file for devel
-  - name: Install programming packages on {{ hostname }}
+  - name: Install development packages on {{ hostname }}
     ansible.builtin.apt: 
       name: "{{ item }}" 
       state: latest

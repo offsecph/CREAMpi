@@ -6,16 +6,17 @@
 ;;  `root_password` is used to provision new root password for CREAMpi
 ;;  `user_password` is used to provision new kali password for CREAMpi
 ;;  `hostname` is used to provision host names on target raspberry pi systems
+;;  `remote_user` is the remote user that will use the ssh key to connect to remote c2 server
 ;;  `remote_server` the remote c2 server which CREAMpi will connect
 ;;  `tunnel_port` is used in changing ssh tunnel configuration port
 ;;  `monitor_port` is used for monitoring ssh tunnel data (0 to disable monitoring and port usage)
 ;;  `tunnel_service` is used to declare what default tunneling service will be enabled (values:ssh, vpn)
-;;  `key_file` is the ssh key file to be used to connect to the remote c2 if ssh service is selected
-;;  `ovpn_file` is the ovpn key file if vpn service is selected
+;;  `key_file` is the ssh key file from the files directory for uploading and used as ssh key.
+;;  `ovpn_file` is the ovpn file from the files directory for uploading and used as vpn key.
 ;;  `mount_phrase` will be used to configure ecryptfs passphrase for folder encryption
 [creampi]
-192.168.1.250     hostname='CREAMpi4-zero' tunnel_port='2222' monitor_port='0' mount_phrase=''
-;192.168.1.251    hostname='CREAMpi4-one' tunnel_port='2223' monitor_port='0' mount_phrase=''
+192.168.1.250     hostname='CREAMpi5-zero' tunnel_port='2222' monitor_port='0' mount_phrase='' ovpn_file=''
+;192.168.1.251    hostname='CREAMpi4-one' tunnel_port='2223' monitor_port='0' mount_phrase='' ovpn_file=''
 
 ;; [hosts:vars] will use the same configuration for all raspberry pi for provisioning.
 ;; to set a different values per server, remove vars below and align them above along
@@ -23,7 +24,7 @@
 [creampi:vars]
 root_password=''
 user_password=''
+remote_user=''
 remote_server=''
 tunnel_service=''
 key_file=''
-ovpn_file=''

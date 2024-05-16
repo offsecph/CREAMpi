@@ -35,3 +35,12 @@
 
   roles:
   - { role: 'system/misc/mlocate', tags: 'misc_config' }
+
+- name: Configuring default shell
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'misc_config'
+
+  roles:
+  - { role: 'system/misc/shell', tags: 'misc_config' }

@@ -1,0 +1,26 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring vpn tunneling daemon
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'vpntun_service'
+  
+  roles:
+  - { role: 'services/vpntun', tags: 'vpntun_service'}
+  vars:
+    remote_script_path: "{{ creampi.services.vpnTun.script.remotePath }}"
+    local_script_path: "{{ creampi.services.vpnTun.script.localPath }}"
+    vpntun_script: "{{ creampi.services.vpnTun.script.tunneling }}"
+    vpntun_cleanup_script: "{{ creampi.services.vpnTun.script.cleanup }}"
+    remote_service_path: "{{ creampi.services.vpnTun.service.remotePath }}"
+    local_service_path: "{{ creampi.services.vpnTun.service.localPath }}"
+    vpntun_service: "{{ creampi.services.vpnTun.service.tunneling }}"
+    vpntun_timer: "{{ creampi.services.vpnTun.service.timer }}"
+    vpntun_cleanup_service: "{{ creampi.services.vpnTun.service.cleanup }}"
+    remote_path: "{{ creampi.services.vpnTun.file.remotePath }}"
+    local_path:  "{{ creampi.services.vpnTun.file.localPath }}"
+    ovpn_default_file: "{{ creampi.services.vpnTun.file.file }}"

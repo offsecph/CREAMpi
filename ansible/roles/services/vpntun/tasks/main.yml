@@ -1,0 +1,183 @@
+---
+# tasks file for vpntun
+- name: Ensure scripts startup directory is present on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0700'
+    recurse: True
+    state: directory
+
+- name: Ensure that openvpn client is installed on {{ hostname }}
+  ansible.builtin.apt:
+    name: openvpn
+    state: latest
+  register: openvpn_result
+
+- name: Create a directory for ovpn file on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ remote_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+# Checking if the VPN tunneling services are present
+# on the system and store data in a variable
+- name: Check if vpn tunnel persistence timer is installed on {{ hostname }}
+  ansible.builtin.stat: 
+    path: "{{ remote_service_path }}/{{ vpntun_timer }}"
+  register: vpntun_timer_status
+
+- name: Check if vpn tunnel service is installed on {{ hostname }}
+  ansible.builtin.stat: 
+    path: "{{ remote_service_path }}/{{ vpntun_service }}"
+  register: vpntun_service_status
+
+- name: Check if vpn tunnel cleanup service is installed on {{ hostname }}
+  ansible.builtin.stat: 
+    path: "{{ remote_service_path }}/{{ vpntun_cleanup_service }}"
+  register: vpntun_cleanup_service_status
+
+# Turn off the services to check whether it needs to be 
+# enabled depending on the tunneling service provider
+- name: Ensure that vpn tunnel persistence timer is turned off if installed on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ vpntun_timer }}"
+    state: stopped
+  register: vpntun_timer_stopped
+  when: 'vpntun_timer_status.stat.exists'
+
+- name: Ensure that vpn tunnel service is turned off if installed on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ vpntun_service }}"
+    state: stopped
+  register: vpntun_service_stopped
+  when: 'vpntun_service_status.stat.exists'
+
+- name: Ensure that vpn tunnel cleanup service is turned off if installed on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ vpntun_cleanup_service }}"
+    state: stopped
+  register: vpntun_cleanup_service_stopped
+  when: 'vpntun_cleanup_service_status.stat.exists'
+
+# Copy the VPN tunneling scripts to pi host
+# regardless of tunnel service
+- name: Copy default vpn tunnel script file on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_script_path }}/{{ vpntun_script }}"
+    dest: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0700'
+    force: True
+
+- name: Copy default vpn cleanup script file on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_script_path }}/{{ vpntun_cleanup_script }}"
+    dest: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0700'
+    force: True
+
+- name: Copy vpn tunnel custom service on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_service_path }}/{{ vpntun_service }}"
+    dest: "{{ remote_service_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: True
+  register: vpntun_service_config
+
+- name: Copy vpn tunnel persistence timer on {{ hostname }}
+  ansible.builtin.template:
+    remote_src: False
+    src: "{{ local_service_path }}/{{ vpntun_timer }}"
+    dest: "{{ remote_service_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: True
+  register: vpntun_timer_config
+  notify:
+    - Restart service addon vpntunnel persistence
+
+- name: Copy vpn tunnel cleanup service on {{ hostname }}
+  ansible.builtin.template:
+    remote_src: False
+    src: "{{ local_service_path }}/{{ vpntun_cleanup_service }}"
+    dest: "{{ remote_service_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: True
+  register: vpntun_cleanup_config
+  notify:
+    - Restart service addon vpntunnel cleanup service
+
+# .ovpn file is optional if ssh service is the 
+# main tunneling service provider
+- name: Copying ovpn file on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_path }}/{{ ovpn_file }}"
+    dest: "{{ remote_path }}/{{ ovpn_file }}"
+    owner: root
+    group: root
+    mode: '0400'
+    force: True
+  when: tunnel_service == "vpn"
+
+# Changing .ovpn file to dropbox.ovpn as default name
+# This will change the name but it still show the original
+# name from openvpn server.
+- name: Changing vpn tunnel ovpn file configuration on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      mv "{{ remote_path }}/{{ ovpn_file }}" "{{ remote_path }}/{{ ovpn_default_file }}"
+  register: ovpn_default_file
+  notify: 
+    - Restart script file changes
+  when: tunnel_service == "vpn"
+
+# Configure the daemon, the service file templates
+# After it detected some changes on the pi
+- name: Ensure to reload systemd daemon configuration changes on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: 'systemctl daemon-reload'
+  when: vpntun_service_config.changed
+
+# Start services if it is selected as primary
+# tunneling provider
+- name: Starting vpntunnel service on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ vpntun_service }}"
+    state: restarted
+    enabled: True
+  when: tunnel_service == "vpn"
+
+- name: Starting vpntunnel-persistence service on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ vpntun_timer }}"
+    state: restarted
+    enabled: True
+  register: vpntun_service_restarted
+  when: tunnel_service == "vpn"
+
+# Check and validate connectivity of the pi host
+# to verbosely output on the CLI
+- name: Check vpn tunnel connectivity on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: 'ifconfig tun0'
+  register: vpntun_connection_test
+  when: tunnel_service == "vpn"
+- debug:
+    msg: "{{ vpntun_connection_test.stdout_lines }}"
+  when: tunnel_service == "vpn"

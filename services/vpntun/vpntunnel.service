@@ -1,0 +1,15 @@
+[Unit]
+Description=OpenVPN tunneling service
+After=network.target
+
+[Service]
+Type=forking
+User=root
+ExecStart=/opt/scripts/startup/vpntunnel.sh start
+ExecReload=/opt/scripts/startup/vpntunnel.sh restart
+ExecStop=/opt/scripts/startup/vpntunnel.sh stop
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

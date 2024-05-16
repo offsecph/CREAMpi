@@ -24,6 +24,7 @@
     remote_key_path: "{{ creampi.services.sshTun.key.remotePath }}"
     local_key_path:  "{{ creampi.services.sshTun.key.localPath }}"
     current_keyfile_config: "{{ creampi.services.sshTun.key.currentConfig }}"
+    current_remote_user: "{{ creampi.services.sshTun.defaults.remoteUser }}"
     current_remote_server: "{{ creampi.services.sshTun.defaults.remoteServer }}"
     default_tun_port: "{{ creampi.services.sshTun.defaults.tunnelPort }}"
     default_mon_port: "{{ creampi.services.sshTun.defaults.monitorPort }}"    

@@ -40,12 +40,17 @@ knock <CREAMpi-IP> 96 96 96 -d 500
 This will:
   - Provision CREAMpi config on multiple pi devices on a single run
 
-1. Set the ssh key of the remote server on .ssh directory
+1. Set the ssh key of the remote server on files directory. This will be also be used as backup key and primary SSH key
 ```sh
-cp id_rsa .ssh/id_rsa
+cp id_rsa CREAMpi/files/id_rsa
+```
+2. Set the ovpn file on files directory if openvpn service is going to be used as VPN key file
+```sh
+mv <file_name.ovpn> dropbox.ovpn
+cp dropbox.ovpn CREAMPi/files/dropbox.ovpn
 ```
 
-2. Configure vars config on data/inventory
+3. Configure vars config on data/inventory
 ```
 ;; Set the ansible_user as default credentials to connect to raspberry pi
 ;; Set the ansible_password as default credentials to connect to raspberry pi
@@ -55,16 +60,17 @@ cp id_rsa .ssh/id_rsa
 ;;  `root_password` is used to provision new root password for CREAMpi
 ;;  `user_password` is used to provision new kali password for CREAMpi
 ;;  `hostname` is used to provision host names on target raspberry pi systems
+;;  `remote_user` is the remote user that will use the ssh key to connect to remote c2 server
 ;;  `remote_server` the remote c2 server which CREAMpi will connect
 ;;  `tunnel_port` is used in changing ssh tunnel configuration port
 ;;  `monitor_port` is used for monitoring ssh tunnel data (0 to disable monitoring and port usage)
 ;;  `tunnel_service` is used to declare what default tunneling service will be enabled (values:ssh, vpn)
-;;  `key_file` is the ssh key file to be used to connect to the remote c2 if ssh service is selected
-;;  `ovpn_file` is the ovpn key file if vpn service is selected
+;;  `key_file` is the ssh key file from the files directory for uploading and used as ssh key.
+;;  `ovpn_file` is the ovpn file from the files directory for uploading and used as vpn key.
 ;;  `mount_phrase` will be used to configure ecryptfs passphrase for folder encryption
 [creampi]
-192.168.1.250     hostname='CREAMpi4-zero' tunnel_port='2222' monitor_port='0' mount_phrase=''
-;192.168.1.251    hostname='CREAMpi4-one' tunnel_port='2223' monitor_port='0' mount_phrase=''
+192.168.1.250     hostname='CREAMpi5-zero' tunnel_port='2222' monitor_port='0' mount_phrase='' ovpn_file=''
+;192.168.1.251    hostname='CREAMpi4-one' tunnel_port='2223' monitor_port='0' mount_phrase='' ovpn_file=''
 
 ;; [hosts:vars] will use the same configuration for all raspberry pi for provisioning.
 ;; to set a different values per server, remove vars below and align them above along
@@ -72,17 +78,17 @@ cp id_rsa .ssh/id_rsa
 [creampi:vars]
 root_password=''
 user_password=''
+remote_user=''
 remote_server=''
 tunnel_service=''
 key_file=''
-ovpn_file=''
 ```
 
-3. Run ansible playbook with default user name and password of kali installation and wait for provisioning.
+4. Run ansible playbook with default user name and password of kali installation and wait for provisioning.
 ```sh
 ansible-playbook main.yml --extra-vars "ansible_user=kali ansible_password=kali"
 ```
-4. Use extra vars to provision a default tunneling protocol
+5. Use extra vars to use a default tunneling protocol or add it on creampi:vars
 ```sh
 ansible-playbook main.yml --extra-vars "ansible_user=kali ansible_password=kali tunnel_service=vpn"
 ```
@@ -90,6 +96,7 @@ ansible-playbook main.yml --extra-vars "ansible_user=kali ansible_password=kali 
 ```sh
 ansible-playbook main.yml --extra-vars "ansible_user=kali ansible_password=kali tunnel_service=ssh"
 ```
+6. Have a coffee break! ☕
 
 ---
 ### Build kali raspberry pi minimal via kali build scripts

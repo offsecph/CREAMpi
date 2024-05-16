@@ -11,7 +11,6 @@
     - iperf3
     - tcpdump
     - hostapd
-    - openvpn
     - dnsrecon
     - smbclient
     - bettercap

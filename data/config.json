@@ -54,7 +54,7 @@
                     "remotePath": "/opt/scripts/startup",
                     "localPath": "../scripts/startup",
                     "tunneling": "sshtunnel.sh",
-                    "cleanup": "cleanup.sh"
+                    "cleanup": "ssh-cleanup.sh"
                 },
     
                 "service": {
@@ -72,9 +72,33 @@
                 },
     
                 "defaults": {
+                    "remoteUser": "root",
                     "remoteServer": "CLOUD_C2",
                     "tunnelPort": "2222",
                     "monitorPort": "0"
+                }
+            },
+
+            "vpnTun": {
+                "script": {
+                    "remotePath": "/opt/scripts/startup",
+                    "localPath": "../scripts/startup",
+                    "tunneling": "vpntunnel.sh",
+                    "cleanup": "vpn-cleanup.sh"
+                },
+
+                "service": {
+                    "remotePath": "/etc/systemd/system",
+                    "localPath": "../services/vpntun",
+                    "tunneling": "vpntunnel.service",
+                    "timer": "vpntunnel-persistence.timer",
+                    "cleanup": "vpntunnel-cleanup.service"
+                },
+
+                "file": {
+                    "remotePath": "/root/.ovpn",
+                    "localPath": "../files",
+                    "file": "dropbox.ovpn"
                 }
             },
             
