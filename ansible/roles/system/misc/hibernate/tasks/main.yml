@@ -1,0 +1,5 @@
+---
+# tasks file for hibernate
+  - name: Disable auto sleep and hibernate on {{ hostname }}
+    ansible.builtin.command: 'systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'
+    register: auto_sleep_output

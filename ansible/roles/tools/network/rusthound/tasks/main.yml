@@ -1,0 +1,28 @@
+---
+# tasks file for rusthound
+- name: Download rusthound ingestor built in rustc on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: 'git clone {{ rusthound_git }} {{ net_module_path }}/rusthound'
+    creates: "{{ net_module_path }}/rusthound"
+
+- name: Add instructions for compiling rusthound on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: | 
+      echo "README:\nCompile rusthound: run \"cargo build --release\"" \
+      > {{ net_module_path }}/rusthound/COMPILE.ME
+    creates: "{{ net_module_path }}/rusthound/COMPILE.ME"
+
+# # Uncomment if to compile rusthound via ansible
+# # WARNING!!!: May take 20-30+ mins to compile. Will not show any prompts until finished.
+# # uncomment this portion up to create symlinks if desired.
+# - name: Compile rusthound to pi compiler on {{ hostname }}
+#   ansible.builtin.shell:
+#     cmd: 'cd {{ net_module_path }}/rusthound && cargo build --release'
+#     creates: '{{ net_module_path }}/rusthound/target'
+
+# - name: Copy rusthound to rusthound base path on {{ hostname }}
+#   ansible.builtin.shell:
+#     cmd: |
+#       cp {{ net_module_path }}/rusthound/target/release/rusthound \
+#       {{ net_module_path }}/rusthound
+#     creates: '{{ net_module_path }}/rusthound/rusthound'

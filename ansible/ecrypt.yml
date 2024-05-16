@@ -1,0 +1,21 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring ecrypt service
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'ecryptfs_service'
+  
+  roles:
+  - { role: 'services/ecrypt', tags: 'ecryptfs_service'}
+  vars:
+    remote_script_path: "{{ creampi.services.ecrypt.script.remotePath }}"
+    local_script_path: "{{ creampi.services.ecrypt.script.localPath }}"
+    ecryptfs_script: "{{ creampi.services.ecrypt.script.ecryptfs }}"
+    ecryptfs_umount: "{{ creampi.services.ecrypt.script.umountfs }}" 
+    remote_service_path: "{{ creampi.services.ecrypt.service.remotePath }}"
+    local_service_path: "{{ creampi.services.ecrypt.service.localPath }}"
+    ecryptfs_service: "{{ creampi.services.ecrypt.service.ecryptfs }}"

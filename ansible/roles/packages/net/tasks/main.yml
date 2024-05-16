@@ -1,0 +1,24 @@
+---
+# tasks file for net
+- name: Install networking packages on {{ hostname }}
+  ansible.builtin.apt: 
+    name: "{{ item }}" 
+    state: latest
+  with_items:
+    - ncat
+    - nmap
+    - ipcalc
+    - iperf3
+    - tcpdump
+    - hostapd
+    - openvpn
+    - dnsrecon
+    - smbclient
+    - bettercap
+    - evil-winrm
+    - hostapd-wpe
+    - speedtest-cli
+    - bind9-dnsutils
+    - isc-dhcp-server
+    - netcat-traditional
+  register: net_result

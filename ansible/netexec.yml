@@ -1,0 +1,19 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing netexec
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'netexec'
+  
+  roles:
+  - { role: 'tools/network/netexec', tags: 'netexec'}
+  vars:
+    net_module_path: "{{ creampi.tools.network.path.module }}"
+    netexec_path: "{{ creampi.tools.network.path.netexec }}"
+    exe_path: "{{ creampi.tools.network.path.executable }}"

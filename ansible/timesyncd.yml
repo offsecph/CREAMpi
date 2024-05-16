@@ -1,0 +1,17 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring time service
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'timesyncd_service'
+  
+  roles:
+  - { role: 'services/timesyncd', tags: 'timesyncd_service' }
+  vars:
+    remote_conf_path: "{{ creampi.services.timesyncd.conf.remotePath }}"
+    local_conf_path: "{{ creampi.services.timesyncd.conf.localPath }}"
+    timesyncd_conf: "{{ creampi.services.timesyncd.conf.template }}"

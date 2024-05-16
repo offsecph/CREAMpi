@@ -1,0 +1,15 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Install networking packages on {{ hostname }}
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'net_pkgs'
+
+  roles:
+  - { role: 'packages/net', tags: 'net_pkgs'}

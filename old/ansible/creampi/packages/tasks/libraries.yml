@@ -1,0 +1,20 @@
+---
+# Install lib packages
+- hosts: creampi
+  gather_facts: false
+  tags: 'lib_pkgs'
+  become: true
+  tasks: 
+  - name: Install library dependencies on {{ hostname }}
+    ansible.builtin.apt: 
+      name: "{{ item }}" 
+      state: latest
+    with_items:
+      - libpq-dev
+      - libgbm-dev
+      - libkrb5-dev
+      - libpcap-dev
+      - libclang-dev
+      - libgssapi-krb5-2
+      - libsasl2-modules-gssapi-mit
+    register: apt_result

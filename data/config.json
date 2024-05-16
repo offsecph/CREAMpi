@@ -1,0 +1,223 @@
+{
+    "creampi": {
+        "system": {
+            "scripts": {
+                "hardware": {
+                    "remotePath": "/opt/scripts/hardware",
+                    "localPath": "../scripts/hardware",
+                    "envPath": "/usr/local/bin"
+                },
+        
+                "network": {
+                    "remotePath": "/opt/scripts/network",
+                    "localPath": "../scripts/network",
+                    "envPath": "/usr/local/bin"
+                },
+                
+                "display": {
+                    "gitRepo": "https://github.com/lcdwiki/LCD-show-kali",
+                    "remotePath": "/opt/scripts/display"
+                }
+            },
+    
+            "config": {
+                "hosts": {
+                    "default":"kali-raspberry-pi",
+                    "file":"/etc/hosts"
+                },
+        
+                "motd": {
+                    "path": "/etc",
+                    "file": "motd",
+                    "template": "../conf/motd"
+                },
+        
+                "issue": {
+                    "path": "/etc",
+                    "file": "issue",
+                    "template": "../conf/issue"
+                }
+            },
+    
+            "misc": {
+                "networkManager": {
+                    "path": "/etc/NetworkManager",
+                    "file": "NetworkManager.conf",
+                    "template": "../conf/networkmanager"
+                }
+            }
+        },
+
+        "services": {
+            "sshTun": {
+                "script": {
+                    "remotePath": "/opt/scripts/startup",
+                    "localPath": "../scripts/startup",
+                    "tunneling": "sshtunnel.sh",
+                    "cleanup": "cleanup.sh"
+                },
+    
+                "service": {
+                    "remotePath": "/etc/systemd/system",
+                    "localPath": "../services/sshtun",
+                    "tunneling": "sshtunnel.service",
+                    "timer": "sshtunnel-persistence.timer",
+                    "cleanup": "sshtunnel-cleanup.service"
+                },
+    
+                "key": {
+                    "remotePath": "/root/.ssh",
+                    "localPath": "../files",
+                    "currentConfig": "id_rsa"
+                },
+    
+                "defaults": {
+                    "remoteServer": "CLOUD_C2",
+                    "tunnelPort": "2222",
+                    "monitorPort": "0"
+                }
+            },
+            
+            "ecrypt": {
+                "script": {
+                    "remotePath": "/opt/scripts/startup",
+                    "localPath": "../scripts/startup",
+                    "ecryptfs": "ecrypt.sh",
+                    "umountfs": "ecrypt-umount.sh"
+                },
+    
+                "service": {
+                    "remotePath": "/etc/systemd/system",
+                    "localPath": "../services/ecrypt",
+                    "ecryptfs": "ecrypt-persistence.service"
+                }
+            },
+    
+            "netfilter": {
+                "script": {
+                    "remotePath": "/opt/scripts/startup",
+                    "localPath": "../scripts/startup",
+                    "iptables": "iptables.sh"
+                },
+    
+                "service": {
+                    "remotePath": "/etc/systemd/system",
+                    "localPath": "../services/iptables",
+                    "iptables": "iptables-persistent.service"
+                },
+    
+                "conf": {
+                    "remotePath": "/etc/iptables",
+                    "localPath": "../conf/iptables",
+                    "rules": "rules.v4"
+                }
+            },
+    
+            "knockd": {
+                "script": {
+                    "remotePath": "/opt/scripts/startup",
+                    "localPath": "../scripts/startup",
+                    "knockd": "knock.sh"
+                },
+    
+                "service": {
+                    "remotePath": "/etc/systemd/system",
+                    "localPath": "../services/knockd",
+                    "knockd": "knockd.service",
+                    "ifaceChecker": "knockd-checker.service"
+                },
+    
+                "conf": {
+                    "remotePath": "/etc",
+                    "localPath": "../conf/knockd",
+                    "template": "knockd.conf"
+                }
+            },
+    
+            "resolved": {
+                "conf": {
+                    "remotePath": "/etc/systemd",
+                    "localPath": "../conf/resolved",
+                    "template": "resolved.conf"
+                }
+            },
+    
+            "sshd": {
+                "conf": {
+                    "remotePath": "/etc/ssh",
+                    "localPath": "../conf/sshd",
+                    "template": "sshd_config"
+                }
+            },
+    
+            "timesyncd": {
+                "conf": {
+                    "remotePath": "/etc/systemd",
+                    "localPath": "../conf/timesyncd",
+                    "template": "timesyncd.conf"
+                }
+            }
+        },
+
+        "tools": {
+            "devel": {
+                "path": {
+                    "temp": "/tmp",
+                    "go": "/opt/go",
+                    "executable": "/usr/bin"
+                },
+    
+                "link": {
+                    "go": "https://go.dev/dl",
+                    "rust": "https://sh.rustup.rs"
+                }
+            },
+    
+            "physical": {
+                "path": {
+                    "module": "/opt/tools/physical"
+                },
+    
+                "git": {
+                    "nacBypass": "https://github.com/scipag/nac_bypass",
+                    "silentBridge": "https://github.com/s0lst1c3/silentbridge"
+                }
+            },
+    
+            "network": {
+                "path": {
+                    "module": "/opt/tools/network",
+                    "executable": "/usr/bin",
+                    "impacket": "/root/.local/bin",
+                    "netexec": "/root/.local/bin"
+                },
+    
+                "git": {
+                    "igandxResponder": "https://github.com/camopants/igandx-Responder",
+                    "bloodhound": "https://github.com/dirkjanm/BloodHound.py",
+                    "rusthound": "https://github.com/NH-RED-TEAM/RustHound",
+                    "netexec": "https://github.com/Pennyw0rth/NetExec"
+                }
+            },
+    
+            "scanner": {
+                "path": {
+                    "executable": "/usr/bin",
+                    "scanner": "/opt/tools/scanners"
+                },
+    
+                "releases": {
+                    "aquatone": "https://api.github.com/repos/michenriksen/aquatone/releases",
+                    "gowitness": "https://api.github.com/repos/sensepost/gowitness/releases",
+                    "nuclei": "https://api.github.com/repos/projectdiscovery/nuclei/releases",
+                    "httpx": "https://api.github.com/repos/projectdiscovery/httpx/releases",
+                    "katana": "https://api.github.com/repos/projectdiscovery/katana/releases"
+                },
+    
+                "git": {
+                    "nucleiTemplates": "https://github.com/projectdiscovery/nuclei-templates"
+                }
+            }
+        }
+    }
+}

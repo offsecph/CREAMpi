@@ -1,0 +1,17 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring DNS service
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'resolved_service'
+  
+  roles:
+  - { role: 'services/resolved', tags: 'resolved_service'}
+  vars:
+    remote_conf_path: "{{ creampi.services.resolved.conf.remotePath }}"
+    local_conf_path: "{{ creampi.services.resolved.conf.localPath }}"
+    resolved_conf: "{{ creampi.services.resolved.conf.template }}"

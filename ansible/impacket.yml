@@ -1,0 +1,19 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing impacket tools
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'impacket_tools'
+  
+  roles:
+  - { role: 'tools/network/impacket', tags: 'impacket_tools'}
+  vars:
+    net_module_path: "{{ creampi.tools.network.path.module }}"
+    impacket_path: "{{ creampi.tools.network.path.impacket }}"
+    exe_path: "{{ creampi.tools.network.path.executable }}"

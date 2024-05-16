@@ -1,0 +1,24 @@
+---
+# tasks file for gowitness
+- name: Download gowitness screenshot tool on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      curl -s {{ gowitness_release }} \
+      | grep "browser_download_url.*gowitness-*.*.*-linux-arm64" \
+      | head -n1 | cut -d: -f2,3 | tr -d "\"" | wget -qi - -P {{ scanner_path }}
+    creates: "{{ scanner_path }}/gowitness"
+
+- name: Rename and set executable for gowitness screenshot tool on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      mv {{ scanner_path }}/gowitness-*.*.*-linux-arm64 {{ scanner_path }}/gowitness \
+      && chmod 0751 {{ scanner_path }}/gowitness
+    creates: "{{ scanner_path }}/gowitness"
+
+- name: Create gowitness symlink on {{ hostname }}
+  ansible.builtin.file:
+    src: "{{ scanner_path }}/{{ item.src }}"
+    dest: "{{ exe_path }}/{{ item.dest }}"
+    state: link
+  loop:
+    - { src: 'gowitness', dest: 'gowitness' }

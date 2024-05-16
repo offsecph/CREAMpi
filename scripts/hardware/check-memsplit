@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Checks the memory split between cpu and gpu
+#
+
+check_root() {
+  if [ "$(id -u)" != "0" ]; then 
+    echo "ERROR: $0 must be run as root"
+    exit 1
+  fi
+}
+
+check_memsplit() {
+ echo -e "Checking current memory split of CPU and GPU:\n"
+ echo "ARM64:"
+ vcgencmd get_mem arm | cut -d'=' -f2
+ echo -e "\nGPU:"
+ vcgencmd get_mem gpu | cut -d'=' -f2
+}
+
+main() {
+    check_root
+    check_memsplit
+}
+
+main

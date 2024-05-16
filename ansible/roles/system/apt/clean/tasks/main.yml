@@ -1,0 +1,7 @@
+---
+# tasks file for clean
+- name: Clean repository and caches on {{ hostname }}
+  ansible.builtin.apt:
+    clean: True
+    autoclean: True
+    force_apt_get: True

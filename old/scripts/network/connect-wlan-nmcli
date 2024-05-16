@@ -1,0 +1,66 @@
+#!/bin/bash
+#
+# connect_wlan_nmcli.sh - connect CREAMpi to a wireless network
+#
+# Set the following variables before running the script.
+
+SSID_NAME=''
+SSID_PASSPHRASE=''
+WLAN_INTERFACE=wlan0
+CONNECTION_TEST=1.1.1.1
+
+check_root() {
+  if [ "$(id -u)" != "0" ]; then 
+    echo "ERROR: $0 must be run as root"
+    exit 1
+  fi
+}
+
+check_wlan_interfaces() {
+  WLAN_INTERFACES=()
+  WLAN_INTERFACES+=$(ip a | grep w | awk '{print $2}' | sed s'/.$//' | sort -u)
+
+  if [[ ! ${WLAN_INTERFACES[*]} =~ ${WLAN_INTERFACE} ]]; then
+    echo "ERROR: WLAN_INTERFACE error. Check configuration for $0"
+    exit
+  else
+    if [[ -z ${SSID_NAME} ]] || [[ -z ${SSID_PASSPHRASE} ]]; then
+      echo "ERROR: Supply a valid SSID_NAME or SSID_PASSPHRASE for $0"
+      exit
+    fi
+    
+    echo "Connecting to target wifi with SSID: ${SSID_NAME}"..
+    sleep 1.5
+  fi
+
+}
+
+connect_wlan() {
+  systemctl unmask wpa_supplicant
+  rfkill list $(rfkill list | grep Wireless | awk -F: {'print $1'})
+  rfkill unblock wifi
+  nmcli radio wifi
+  nmcli radio wifi on
+  nmcli radio wifi
+  nmcli dev wifi list | /usr/games/lolcat
+  nmcli dev wifi connect ${SSID_NAME} password "${SSID_PASSPHRASE}" && sleep 1.5
+  nmcli con show
+  ifconfig ${WLAN_INTERFACE}
+  ping -c 1 ${CONNECTION_TEST}
+}
+
+reconnect_c2() {
+  if [ `systemctl is-active callhome` == "active" ] || [ `systemctl is-active callhome` == "failed" ]; then
+    systemctl stop callhome.service && sleep 3
+    systemctl start callhome.service
+  fi
+}
+
+main() {
+  check_root
+  check_wlan_interfaces
+  connect_wlan
+  reconnect_c2
+}
+
+main

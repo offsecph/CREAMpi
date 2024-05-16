@@ -1,0 +1,20 @@
+---
+# tasks file for networkmanager
+  - name: Create a backup for NetworkManager.conf on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: true
+      src: "{{ network_manager_path }}/{{ network_manager_file }}"
+      dest: "{{ network_manager_path }}/{{ network_manager_file }}.bak"
+      force: false
+
+  - name: Ensure to remove old NetworkManager config on {{ hostname }}
+    ansible.builtin.shell: 
+      cmd: 'nmcli con del "Ifupdown (eth0)"'
+      removes: '{{ network_manager_path }}/system-connections/"Ifupdown (eth0).nmconnection"'
+
+  - name: Configure managed interface for NetworkManager on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: false
+      src: "{{ network_manager_template }}/{{ network_manager_file }}"
+      dest: "{{ network_manager_path }}/{{ network_manager_file }}"
+      force: False

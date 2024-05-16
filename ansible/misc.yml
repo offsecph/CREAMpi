@@ -1,0 +1,37 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Modifying auto sleep and hibernate
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'misc_config'
+  
+  roles:
+  - { role: 'system/misc/hibernate', tags: 'misc_config' }
+
+- name: Configuring networkmanager defaults
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'misc_config'
+  
+  roles:
+  - { role: 'system/misc/networkmanager', tags: 'misc_config' }
+  vars:
+    network_manager_path: "{{ creampi.system.misc.networkManager.path }}"
+    network_manager_file: "{{ creampi.system.misc.networkManager.file }}"
+    network_manager_template: "{{ creampi.system.misc.networkManager.template }}"
+
+- name: Configuring local path database
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'misc_config'
+
+  roles:
+  - { role: 'system/misc/mlocate', tags: 'misc_config' }

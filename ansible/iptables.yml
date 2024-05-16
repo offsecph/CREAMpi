@@ -1,0 +1,23 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring stateful firewall
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'netfilter_service'
+  
+  roles:
+  - { role: 'services/iptables', tags: 'netfilter_service'}
+  vars:
+    remote_script_path: "{{ creampi.services.netfilter.script.remotePath }}"
+    local_script_path: "{{ creampi.services.netfilter.script.localPath }}"
+    iptables_script: "{{ creampi.services.netfilter.script.iptables }}"
+    remote_service_path: "{{ creampi.services.netfilter.service.remotePath }}"
+    local_service_path: "{{ creampi.services.netfilter.service.localPath }}"
+    iptables_service: "{{ creampi.services.netfilter.service.iptables }}"
+    remote_conf_path: "{{ creampi.services.netfilter.conf.remotePath }}"
+    local_conf_path: "{{ creampi.services.netfilter.conf.localPath }}"
+    iptables_rules: "{{ creampi.services.netfilter.conf.rules }}"

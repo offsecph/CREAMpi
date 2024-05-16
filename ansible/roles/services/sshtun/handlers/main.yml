@@ -1,0 +1,16 @@
+---
+# handlers file for sshtun
+- name: Restart script file changes
+  ansible.builtin.service:
+    name: "{{ sshtun_service }}"
+    state: restarted
+
+- name: Restart service addon sshtunnel persistence
+  ansible.builtin.service:
+    name: "{{ sshtun_timer }}"
+    state: restarted
+
+- name: Restart service addon sshtunnel cleanup service
+  ansible.builtin.service:
+    name: "{{ sshtun_cleanup_service }}"
+    state: restarted

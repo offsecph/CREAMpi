@@ -1,0 +1,7 @@
+---
+## -- Provision creampi packages configuration --
+
+ - import_playbook: packages/tasks/libraries.yml
+ - import_playbook: packages/tasks/networking.yml
+ - import_playbook: packages/tasks/programming.yml
+ - import_playbook: packages/tasks/utilities.yml

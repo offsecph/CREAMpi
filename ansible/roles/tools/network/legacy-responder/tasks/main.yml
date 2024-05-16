@@ -1,0 +1,10 @@
+---
+# tasks file for legacy-responder
+- name: Download legacy Responder on {{ hostname }}
+  ansible.builtin.apt: 
+    name: "{{ item }}" 
+    state: latest
+    force_apt_get: true
+  with_items:
+    - responder
+  register: apt_result

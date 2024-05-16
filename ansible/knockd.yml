@@ -1,0 +1,24 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring port knocking
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'knockd_service'
+  
+  roles:
+  - { role: 'services/knockd', tags: 'knockd_service'}
+  vars:
+    remote_script_path: "{{ creampi.services.knockd.script.remotePath }}"
+    local_script_path: "{{ creampi.services.knockd.script.localPath }}"
+    knockd_script: "{{ creampi.services.knockd.script.knockd }}"
+    remote_service_path: "{{ creampi.services.knockd.service.remotePath }}"
+    local_service_path: "{{ creampi.services.knockd.service.localPath }}"
+    knockd_service: "{{ creampi.services.knockd.service.knockd }}"
+    knockd_iface_checker: "{{ creampi.services.knockd.service.ifaceChecker }}"
+    remote_conf_path: "{{ creampi.services.knockd.conf.remotePath }}"
+    local_conf_path: "{{ creampi.services.knockd.conf.localPath }}"
+    knockd_conf: "{{ creampi.services.knockd.conf.template }}"

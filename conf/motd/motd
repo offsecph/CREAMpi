@@ -1,0 +1,22 @@
+
+ ▄████▄        ██▀███       ▓█████       ▄▄▄            ███▄ ▄███▓      ██▓███   ██▓
+▒██▀ ▀█       ▓██ ▒ ██▒     ▓█   ▀      ▒████▄         ▓██▒▀█▀ ██▒     ▓██░  ██▒▓██▒
+▒▓█    ▄      ▓██ ░▄█ ▒     ▒███        ▒██  ▀█▄       ▓██    ▓██░     ▓██░ ██▓▒▒██▒
+▒▓▓▄ ▄██▒     ▒██▀▀█▄       ▒▓█  ▄      ░██▄▄▄▄██      ▒██    ▒██      ▒██▄█▓▒ ▒░██░
+▒ ▓███▀ ░ ██▓ ░██▓ ▒██▒ ██▓ ░▒████▒ ██▓  ▓█   ▓██▒ ██▓ ▒██▒   ░██▒ ██▓ ▒██▒ ░  ░░██░
+░ ░▒ ▒  ░ ▒▓▒ ░ ▒▓ ░▒▓░ ▒▓▒ ░░ ▒░ ░ ▒▓▒  ▒▒   ▓▒█░ ▒▓▒ ░ ▒░   ░  ░ ▒▓▒ ▒▓▒░ ░  ░░▓  
+  ░  ▒    ░▒    ░▒ ░ ▒░ ░▒   ░ ░  ░ ░▒    ▒   ▒▒ ░ ░▒  ░  ░      ░ ░▒  ░▒ ░      ▒ ░
+      [ Cyber Reconnaissance and Exploitation Analysis Module (C.R.E.A.M.) ]
+
+Kali GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+
+NOTE:
+  Use tmux, so if the service restarted, your work will not be affected
+  and you can reconnect to tmux session after logging back in the server.
+  - Create session name using `tmux new -s <session_name>`
+  - Rename session using `tmux rename -t <old_name> <new_name>`
+
+WARNING:
+  If there is a need to restart the CREAMpi, please contact the other
+  testers if there is a session left behind to avoid terminating processes.

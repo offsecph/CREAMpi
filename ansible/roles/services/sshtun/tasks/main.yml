@@ -1,0 +1,159 @@
+---
+# tasks file for sshtun
+- name: Ensure scripts startup directory is present on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0700'
+    recurse: True
+    state: directory
+
+- name: Ensure that autossh is installed on {{ hostname }}
+  ansible.builtin.apt:
+    name: autossh
+    state: latest
+  register: autossh_result
+
+- name: Check if ssh tunnel service is installed on {{ hostname }}
+  ansible.builtin.stat: 
+    path: "{{ remote_service_path }}/{{ sshtun_service }}"
+  register: sshtun_service_status
+# - debug:
+#     msg: "{{ sshtun_service_status }}"
+
+- name: Ensure that ssh tunnel service is turned off if installed on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ sshtun_service }}"
+    state: stopped
+  when: sshtun_service_status.stat.exists
+  register: sshtun_service_stopped
+
+- name: Copy default ssh tunnel script file on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_script_path }}/{{ sshtun_script }}"
+    dest: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0700'
+    force: True
+
+- name: Copy default ssh tunnel script file on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_script_path }}/{{ sshtun_cleanup_script }}"
+    dest: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0700'
+    force: True
+
+- name: Copy ssh tunnel custom service on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_service_path }}/{{ sshtun_service }}"
+    dest: "{{ remote_service_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: True
+  register: sshtun_service_config
+
+- name: Copy ssh tunnel persistence timer on {{ hostname }}
+  ansible.builtin.template:
+    remote_src: False
+    src: "{{ local_service_path }}/{{ sshtun_timer }}"
+    dest: "{{ remote_service_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: True
+  register: sshtun_timer_config
+  notify:
+    - Restart service addon sshtunnel persistence
+
+- name: Copy ssh tunnel cleanup service on {{ hostname }}
+  ansible.builtin.template:
+    remote_src: False
+    src: "{{ local_service_path }}/{{ sshtun_cleanup_service }}"
+    dest: "{{ remote_service_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: True
+  register: sshtun_cleanup_config
+  notify:
+    - Restart service addon sshtunnel cleanup service
+
+- name: Copying private key on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_key_path }}/{{ key_file }}"
+    dest: "{{ remote_key_path }}/{{ key_file }}"
+    owner: root
+    group: root
+    mode: '0400'
+    force: True
+
+- name: Changing ssh tunnel server configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_script_path }}/{{ sshtun_script }}"
+    regexp: "{{ current_remote_server }}"
+    replace: '{{ remote_server }}'
+  register: sshtun_server_output
+  notify: 
+    - Restart script file changes
+
+- name: Changing ssh tunnel keyfile configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_script_path }}/{{ sshtun_script }}"
+    regexp: "{{ remote_key_path }}/{{ current_keyfile_config }}"
+    replace: "{{ remote_key_path }}/{{ key_file }}"
+  register: sshtun_keyfile_output
+  notify: 
+    - Restart script file changes
+
+- name: Changing tunnel port configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_script_path }}/{{ sshtun_script }}"
+    regexp: "{{ default_tun_port }}"
+    replace: "{{ tunnel_port }}"
+  register: sshtun_tunport_output
+  notify:
+    - Restart script file changes
+
+- name: Changing autossh monitor port configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_script_path }}/{{ sshtun_script }}"
+    regexp: "{{ default_mon_port }}"
+    replace: "{{ monitor_port }}"
+  register: sshtun_tunport_output
+  notify:
+    - Restart script file changes
+
+- name: Ensure to reload systemd daemon configuration changes on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: 'systemctl daemon-reload'
+  when: sshtun_service_config.changed
+
+- name: Starting sshtunnel service on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ sshtun_service }}"
+    state: restarted
+    enabled: True
+    
+- name: Starting sshtunnel-persistence service on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ sshtun_timer }}"
+    state: restarted
+    enabled: True
+  register: sshtun_service_restarted
+
+- name: Check ssh tunnel connectivity on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      sleep 5 && \
+      netstat -plnt \
+      | grep -E 22\([0-9]\{1,2\}\)
+  register: sshtun_connection_test

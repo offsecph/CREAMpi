@@ -1,0 +1,25 @@
+---
+## -- Reboot after provisioning  --
+- hosts: creampi
+  gather_facts: false
+  serial: 1
+  tags: 'reboot_creampi'
+  become: true
+  
+  tasks:
+  - name: Rebooting {{ hostname }} for provisioning changes
+    ansible.builtin.shell:
+      cmd: echo "Ansible {{ hostname }} provisioning changes. Rebooting after 10s"
+    register: reboot_msg
+  - debug:
+      msg: '{{ reboot_msg.stdout_lines }}'
+
+  - name: Rebooting the {{ hostname }} in 10 seconds
+    ansible.builtin.shell:
+      cmd: |
+        echo "Ansible {{ hostname }} provisioning changes Rebooting after 10s 2>&1 \
+        | wall && sleep 9"
+
+  - name: Rebooting {{ hostname }} (Task will fail due to connectivity)
+    ansible.builtin.reboot:
+      reboot_timeout: 10

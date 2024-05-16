@@ -1,0 +1,45 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring hardware scripts builtin
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'builtin_scripts'
+  
+  roles:
+  - { role: 'system/scripts/hardware', tags: 'builtin_scripts' }
+  vars:
+    remote_hardware_path: "{{ creampi.system.scripts.hardware.remotePath }}"
+    local_hardware_path: "{{ creampi.system.scripts.hardware.localPath }}"
+    env_path: "{{ creampi.system.scripts.hardware.envPath }}"
+  
+
+- name: Configuring network scripts builtin
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'builtin_scripts'
+  
+  roles:
+  - { role: 'system/scripts/network', tags: 'builtin_scripts' }
+  vars:
+    remote_network_path: "{{ creampi.system.scripts.network.remotePath }}"
+    local_network_path: "{{ creampi.system.scripts.network.localPath }}"
+    env_path: "{{ creampi.system.scripts.network.envPath }}"
+
+- name: Configuring network scripts builtin
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'builtin_scripts'
+
+  roles:
+  - { role: 'system/scripts/display', tags: 'builtin_scripts' }
+  vars:
+    display_git_repo: "{{ creampi.system.scripts.display.gitRepo }}"
+    remote_display_path: "{{ creampi.system.scripts.display.remotePath }}"

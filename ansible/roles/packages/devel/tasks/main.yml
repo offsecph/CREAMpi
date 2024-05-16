@@ -1,0 +1,21 @@
+---
+# tasks file for devel
+  - name: Install programming packages on {{ hostname }}
+    ansible.builtin.apt: 
+      name: "{{ item }}" 
+      state: latest
+    with_items:
+      - vim
+      - git
+      - gcc
+      - pipx
+      - clang
+      - cmake
+      - musl-dev
+      - musl-tools
+      - python3-pip
+      - python3-full
+      - build-essential
+      - python3-virtualenv
+      - gcc-arm-linux-gnueabihf
+    register: devel_result

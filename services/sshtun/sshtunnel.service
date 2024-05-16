@@ -1,0 +1,15 @@
+[Unit]
+Description=SSH tunneling service
+After=network.target
+
+[Service]
+Type=forking
+User=root
+ExecStart=/opt/scripts/startup/sshtunnel.sh start
+ExecReload=/opt/scripts/startup/sshtunnel.sh restart
+ExecStop=/opt/scripts/startup/sshtunnel.sh stop
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

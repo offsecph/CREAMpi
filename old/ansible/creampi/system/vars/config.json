@@ -1,0 +1,53 @@
+{
+    "system": {
+        "scripts": {
+            "hardware": {
+                "remotePath": "/opt/scripts/hardware",
+                "localPath": "../../../../scripts/hardware"
+            },
+    
+            "network": {
+                "remotePath": "/opt/scripts/network",
+                "localPath": "../../../../scripts/network"
+            },
+            
+            "display": {
+                "gitRepo": "https://github.com/lcdwiki/LCD-show-kali",
+                "remotePath": "/opt/scripts/display",
+                "LibPath": "/usr/lib/LCD-show-kali",
+                "localPath": "../../../../scripts/display/LCD-show-kali",
+                "lcd35": "LCD35-show",
+                "lcd5": "LCD5-show",
+                "lcd7b": "LCD7B-show",
+                "lcd7c": "LCD7C-show",
+                "lcd7h": "LCD7H-show",
+                "lcdHdmi": "LCD-hdmi"
+            }
+        },
+
+        "config": {
+            "hosts": {
+                "default":"kali-raspberry-pi",
+                "file":"/etc/hosts"
+            },
+    
+            "motd": {
+                "file": "../../../../conf/motd",
+                "path": "/etc/motd"
+            },
+    
+            "issue": {
+                "file": "../../../../conf/issue",
+                "path": "/etc/issue"
+            }
+        },
+
+        "misc": {
+            "networkManager": {
+                "path": "/etc/NetworkManager",
+                "file": "NetworkManager.conf",
+                "template": "../../../../conf"
+            }
+        }
+    }
+}

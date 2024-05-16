@@ -1,0 +1,29 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring SSH tunneling daemon
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'sshtun_service'
+  
+  roles:
+  - { role: 'services/sshtun', tags: 'sshtun_service'}
+  vars:
+    remote_script_path: "{{ creampi.services.sshTun.script.remotePath }}"
+    local_script_path: "{{ creampi.services.sshTun.script.localPath }}"
+    sshtun_script: "{{ creampi.services.sshTun.script.tunneling }}"
+    sshtun_cleanup_script: "{{ creampi.services.sshTun.script.cleanup }}"
+    remote_service_path: "{{ creampi.services.sshTun.service.remotePath }}"
+    local_service_path: "{{ creampi.services.sshTun.service.localPath }}"
+    sshtun_service: "{{ creampi.services.sshTun.service.tunneling }}"
+    sshtun_timer: "{{ creampi.services.sshTun.service.timer }}"
+    sshtun_cleanup_service: "{{ creampi.services.sshTun.service.cleanup }}"
+    remote_key_path: "{{ creampi.services.sshTun.key.remotePath }}"
+    local_key_path:  "{{ creampi.services.sshTun.key.localPath }}"
+    current_keyfile_config: "{{ creampi.services.sshTun.key.currentConfig }}"
+    current_remote_server: "{{ creampi.services.sshTun.defaults.remoteServer }}"
+    default_tun_port: "{{ creampi.services.sshTun.defaults.tunnelPort }}"
+    default_mon_port: "{{ creampi.services.sshTun.defaults.monitorPort }}"    

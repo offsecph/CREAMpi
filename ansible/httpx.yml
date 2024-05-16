@@ -1,0 +1,19 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing httpx
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'httpx_parser'
+  
+  roles:
+  - { role: 'tools/scanner/httpx', tags: 'httpx_parser'}
+  vars:
+    exe_path: "{{ creampi.tools.scanner.path.executable }}"
+    scanner_path: "{{ creampi.tools.scanner.path.scanner }}"
+    httpx_release: "{{ creampi.tools.scanner.releases.httpx }}"

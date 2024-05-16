@@ -1,0 +1,18 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing silent bridge module
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'silent_bridge'
+  
+  roles:
+  - { role: 'tools/physical/silent-bridge', tags: 'silent_bridge'}
+  vars:
+    phy_module_path: "{{ creampi.tools.physical.path.module }}"
+    silentbridge_git: "{{ creampi.tools.physical.git.silentBridge }}"

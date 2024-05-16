@@ -1,0 +1,45 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Modifying host configuration
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'host_config'
+  
+  roles:
+  - { role: 'system/host/hostname', tags: 'host_config' }
+  vars:
+    default_hostname: "{{ creampi.system.config.hosts.default }}"
+    hosts_file: "{{ creampi.system.config.hosts.file }}"
+
+- name: Modifying new login banner
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'host_config'
+
+  roles:
+  - { role: 'system/host/issue', tags: 'host_config' }
+  vars:
+    issue_file: "{{ creampi.system.config.issue.file }}"
+    issue_path: "{{ creampi.system.config.issue.path }}"
+    template: "{{ creampi.system.config.issue.template }}"
+
+- name: Modifying motd banner
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'host_config'
+
+  roles:
+  - { role: 'system/host/motd', tags: 'host_config' }
+  vars:
+    motd_file: "{{ creampi.system.config.motd.file }}"
+    motd_path: "{{ creampi.system.config.motd.path }}"
+    template: "{{ creampi.system.config.motd.template }}"
+

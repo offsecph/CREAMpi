@@ -1,0 +1,25 @@
+---
+# tasks file for nuclei
+- name: Download nuclei scanner tool on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      curl -s {{ nuclei_release }} \
+      | grep "browser_download_url.*_linux_arm64.zip" \
+      | head -n1 | cut -d: -f2,3 | tr -d "\"" | wget -qi - -P {{ scanner_path }}
+    creates: "{{ scanner_path }}/nuclei"
+
+- name: Unpack nuclei scanner tool on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      unzip {{ scanner_path }}/nuclei_*.*.*_linux_arm64.zip -d {{ scanner_path }} \
+      && rm -rf {{ scanner_path }}/nuclei_*.*.*_linux_arm64.zip {{ scanner_path }}/*.txt \
+      {{ scanner_path }}/*.md
+    creates: "{{ scanner_path }}/nuclei"
+
+- name: Create nuclei symlink on {{ hostname }}
+  ansible.builtin.file:
+    src: "{{ scanner_path }}/{{ item.src }}"
+    dest: "{{ exe_path }}/{{ item.dest }}"
+    state: link
+  loop:
+    - { src: 'nuclei', dest: 'nuclei' }

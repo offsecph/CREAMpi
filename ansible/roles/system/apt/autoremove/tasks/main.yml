@@ -1,0 +1,6 @@
+---
+# tasks file for autoremove
+- name: Remove dependencies that are no longer required on {{ hostname }}
+  ansible.builtin.apt:
+    autoremove: True
+    force_apt_get: True

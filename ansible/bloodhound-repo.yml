@@ -1,0 +1,15 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing bloodhound from repository
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'bloodhound_apt'
+  
+  roles:
+  - { role: 'tools/network/bloodhound-python', tags: 'bloodhound_apt'}

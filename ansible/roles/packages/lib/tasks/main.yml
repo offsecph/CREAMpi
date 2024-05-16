@@ -1,0 +1,15 @@
+---
+# tasks file for lib
+  - name: Install development packages on {{ hostname }}
+    ansible.builtin.apt: 
+      name: "{{ item }}" 
+      state: latest
+    with_items:
+      - libpq-dev
+      - libgbm-dev
+      - libkrb5-dev
+      - libpcap-dev
+      - libclang-dev
+      - libgssapi-krb5-2
+      - libsasl2-modules-gssapi-mit
+    register: lib_result

@@ -1,0 +1,15 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Install os library dependencies on {{ hostname }}
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'lib_pkgs'
+  
+  roles:
+  - { role: 'packages/lib', tags: 'lib_pkgs'}

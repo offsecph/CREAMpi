@@ -1,0 +1,18 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing igandx responder
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'igandx_responder'
+  
+  roles:
+  - { role: 'tools/network/igandx-responder', tags: 'igandx_responder'}
+  vars:
+    net_module_path: "{{ creampi.tools.network.path.module }}"
+    igandx_responder_git: "{{ creampi.tools.network.git.igandxResponder }}"

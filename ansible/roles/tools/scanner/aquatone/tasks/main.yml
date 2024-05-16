@@ -1,0 +1,33 @@
+---
+# tasks file for aquatone
+- name: Create a directory for scanner tools on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ scanner_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+- name: Download aquatone screenshot tool on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      curl -s {{ aquatone_release }} \
+      | grep "browser_download_url.*_linux_arm64_*.*.*zip" \
+      | head -n1 | cut -d: -f2,3 | tr -d "\"" | wget -qi - -P {{ scanner_path }}
+    creates: "{{ scanner_path }}/aquatone"
+
+- name: Unpack aquatone screenshot tool on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      unzip {{ scanner_path }}/aquatone_linux_arm64_*.*.*.zip -d {{ scanner_path }} \
+      && rm -rf {{ scanner_path }}/aquatone_linux_arm64_*.*.*.zip {{ scanner_path }}/*.txt \
+      {{ scanner_path }}/*.md
+    creates: "{{ scanner_path }}/aquatone"
+
+- name: Create aquatone symlink on {{ hostname }}
+  ansible.builtin.file:
+    src: "{{ scanner_path }}/{{ item.src }}"
+    dest: "{{ exe_path }}/{{ item.dest }}"
+    state: link
+  loop:
+    - { src: 'aquatone', dest: 'aquatone' }

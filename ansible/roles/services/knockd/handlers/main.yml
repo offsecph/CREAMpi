@@ -1,0 +1,6 @@
+---
+# handlers file for knockd
+- name: Restart knockd on conf file changes
+  ansible.builtin.service:
+    name: "{{ knockd_service }}"
+    state: restarted

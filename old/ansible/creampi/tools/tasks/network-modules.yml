@@ -1,0 +1,164 @@
+---
+# Load data from config.json
+- import_playbook: ../vars/data.yml
+
+- hosts: creampi
+  gather_facts: false
+  tags: 'network_modules'
+  become: true
+  vars:
+    net_module_path: "{{ tools.network.path.module }}"
+    exe_path: "{{ tools.network.path.executable }}"
+    impacket_path: "{{ tools.network.path.impacket }}"
+    netexec_path: "{{ tools.network.path.netexec }}"
+    igandx_responder_git: "{{ tools.network.git.igandxResponder }}"
+    bloodhound_git: "{{ tools.network.git.bloodhound }}"
+    rusthound_git: "{{ tools.network.git.rusthound }}"
+    netexec_git: "{{ tools.network.git.netexec }}"
+
+  tasks:
+  - name: Create a directory for network-modules tools on {{ hostname }}
+    ansible.builtin.file:
+      path: "{{ net_module_path }}"
+      owner: root
+      group: root
+      mode: '0755'
+      state: directory
+
+  - name: Download igandx-Responder on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: |
+        git clone {{ igandx_responder_git }} \
+        {{ net_module_path }}/igandx-responder
+      creates: '{{ net_module_path }}/igandx-responder'
+
+  - name: Create symlinks for igandx-Responder tools on {{ hostname }}
+    ansible.builtin.file:
+      src: "{{ net_module_path }}/igandx-responder/{{ item.src }}"
+      dest: "/usr/bin/{{ item.dest }}"
+      state: link
+      force: true
+    loop:
+      - { src: Responder.py, dest: igandx-responder }
+      - { src: DumpHash.py, dest: igandx-dumphash }
+      - { src: Report.py, dest: igandx-report }
+    
+  - name: Download legacy Responder on {{ hostname }}
+    ansible.builtin.apt: 
+      name: "{{ item }}" 
+      state: latest
+      force_apt_get: true
+    with_items:
+      - responder
+    register: apt_result
+
+  - name: Download impacket tools on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: 'pipx install impacket'
+      creates: "{{ impacket_path }}/*.py"
+
+  - name: Create a directory for impacket tools on {{ hostname }}
+    ansible.builtin.file:
+      path: "{{ net_module_path }}/impacket"
+      owner: root
+      group: root
+      mode: '0755'
+      state: directory
+      
+  - name: Rename .py to impacket and create hard symlinks on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: |
+        for x in `ls {{ impacket_path }}`; \
+        do impacket_tools=`echo impacket-\$x | sed s"/.py//"`; \
+        `cp {{ impacket_path }}/$x {{ net_module_path }}/impacket/\$impacket_tools`; done
+      creates: '{{ net_module_path }}/impacket/*'
+
+  - name: Remove old impacket scripts from executable path on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: 'rm -rf {{ exe_path }}/impacket-*'
+      removes: "{{ exe_path }}/impacket-*"
+
+  - name: Create impacket symlinks to executable path on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: |
+        for x in `ls {{ net_module_path }}/impacket`; \
+        do `ln -s {{ net_module_path }}/impacket/\$x {{ exe_path }}/\$x`; done
+      creates: "{{ exe_path }}/impacket-*"
+
+  - name: Download bloodhound-python ingestor on {{ hostname }}
+    ansible.builtin.apt:
+      name: "{{ item }}"
+      state: latest
+      force_apt_get: true
+    with_items:
+      - responder
+    register: apt_result
+
+  - name: Download netexec via pipx on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: 'pipx install git+https://github.com/Pennyw0rth/NetExec'
+      creates: '{{ netexec_path }}/netexec'
+
+  - name: Create a directory for netexec {{ hostname }}
+    ansible.builtin.file:
+      path: "{{ net_module_path }}/netexec"
+      owner: root
+      group: root
+      mode: '0755'
+      state: directory
+      
+  - name: Create hard symlinks for netexec on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: true
+      src: "{{ netexec_path }}/{{ item.src }}"
+      dest: "{{ net_module_path }}/netexec/{{ item.dest }}"
+      force: true
+    loop:
+      - { src: nxc, dest: nxc }
+      - { src: NetExec, dest: NetExec }
+      - { src: netexec, dest: netexec }
+      - { src: nxcdb, dest: nxcdb }
+
+  - name: Create netexec symlinks in executable path on {{ hostname }}
+    ansible.builtin.file:
+      src: "{{ net_module_path }}/netexec/{{ item.src }}"
+      dest: "/usr/bin/{{ item.dest }}"
+      state: link
+      force: true
+    loop:
+      - { src: nxc, dest: nxc }
+      - { src: NetExec, dest: NetExec }
+      - { src: netexec, dest: netexec }
+      - { src: nxcdb, dest: nxcdb }
+
+  - name: Download bloodhound-python github version on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: 'git clone {{ bloodhound_git }} {{ net_module_path }}/bloodhound-python'
+      creates: "{{ net_module_path }}/bloodhound-python"
+
+  - name: Download rusthound ingestor built in rustc on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: 'git clone {{ rusthound_git }} {{ net_module_path }}/rusthound'
+      creates: "{{ net_module_path }}/rusthound"
+
+  - name: Add instructions for compiling rusthound on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: | 
+        echo "README:\nCompile rusthound: run \"cargo build --release\"" \
+        > {{ net_module_path }}/rusthound/COMPILE.ME
+      creates: "{{ net_module_path }}/rusthound/COMPILE.ME"
+
+  # # Uncomment if to compile rusthound via ansible
+  # # WARNING!!!: May take 20 mins to compile. Will not show any prompts until finished.
+  # # uncomment this portion up to create symlinks if desired.
+  # - name: Compile rusthound to pi compiler on {{ hostname }}
+  #   ansible.builtin.shell:
+  #     cmd: 'cd {{ net_module_path }}/rusthound && cargo build --release'
+  #     creates: '{{ net_module_path }}/rusthound/target'
+
+  # - name: Copy rusthound to rusthound base path on {{ hostname }}
+  #   ansible.builtin.shell:
+  #     cmd: |
+  #       cp {{ net_module_path }}/rusthound/target/release/rusthound \
+  #       {{ net_module_path }}/rusthound
+  #     creates: '{{ net_module_path }}/rusthound/rusthound'

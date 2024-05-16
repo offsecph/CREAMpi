@@ -1,0 +1,16 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing rust
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'devel_modules'
+  
+  roles:
+  - { role: 'tools/devel/rust', tags: 'devel_modules' }
+  vars:
+    rust_link: "{{ creampi.tools.devel.link.rust }}"
+    exe_path: "{{ creampi.tools.devel.path.executable }}"

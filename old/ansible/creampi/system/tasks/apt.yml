@@ -1,0 +1,25 @@
+---
+## -- Provision creampi builtin package manager --
+- hosts: creampi
+  tags: 'apt_cache'
+  gather_facts: false
+  become: true
+
+  tasks:
+  - name: Update and upgrade apt packages on {{ hostname }}
+    ansible.builtin.apt:
+      update_cache: true
+      upgrade: yes
+      state: latest
+      force_apt_get: true
+
+  - name: Clean repository and caches on {{ hostname }}
+    ansible.builtin.apt:
+      clean: true
+      autoclean: true
+      force_apt_get: true
+
+  - name: Remove dependencies that are no longer required on {{ hostname }}
+    ansible.builtin.apt:
+      autoremove: true
+      force_apt_get: true

@@ -1,0 +1,19 @@
+---
+# tasks file for igandx-responder
+- name: Download igandx-Responder on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      git clone {{ igandx_responder_git }} \
+      {{ net_module_path }}/igandx-responder
+    creates: '{{ net_module_path }}/igandx-responder'
+
+- name: Create symlinks for igandx-Responder tools on {{ hostname }}
+  ansible.builtin.file:
+    src: "{{ net_module_path }}/igandx-responder/{{ item.src }}"
+    dest: "/usr/bin/{{ item.dest }}"
+    state: link
+    force: true
+  loop:
+    - { src: Responder.py, dest: igandx-responder }
+    - { src: DumpHash.py, dest: igandx-dumphash }
+    - { src: Report.py, dest: igandx-report }

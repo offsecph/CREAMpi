@@ -1,0 +1,23 @@
+---
+# tasks file for nuclei-templates
+- name: Download nuclei templates on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      git clone {{ nuclei_templates_git }} \
+      {{ scanner_path }}/nuclei-templates
+    creates: "{{ scanner_path }}/nuclei-templates"
+
+- name: Create a directory for all-templates path on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ scanner_path }}/all-templates"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+- name: Group all templates for usage on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      find {{ scanner_path }}/nuclei-templates -type f -name *.yaml \
+      | xargs -I % cp -f % {{ scanner_path }}/all-templates
+    creates: "{{ scanner_path }}/all-templates/*.yaml"

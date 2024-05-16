@@ -1,0 +1,39 @@
+---
+# tasks file for netexec
+- name: Download netexec via pipx on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: 'pipx install git+https://github.com/Pennyw0rth/NetExec'
+    creates: '{{ netexec_path }}/netexec'
+
+- name: Create a directory for netexec {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ net_module_path }}/netexec"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+    
+- name: Create hard symlinks for netexec on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: True
+    src: "{{ netexec_path }}/{{ item.src }}"
+    dest: "{{ net_module_path }}/netexec/{{ item.dest }}"
+    mode: 0744
+    force: True
+  loop:
+    - { src: nxc, dest: nxc }
+    - { src: NetExec, dest: NetExec }
+    - { src: netexec, dest: netexec }
+    - { src: nxcdb, dest: nxcdb }
+
+- name: Create netexec symlinks in executable path on {{ hostname }}
+  ansible.builtin.file:
+    src: "{{ net_module_path }}/netexec/{{ item.src }}"
+    dest: "{{ exe_path }}/{{ item.dest }}"
+    state: link
+    force: True
+  loop:
+    - { src: nxc, dest: nxc }
+    - { src: NetExec, dest: NetExec }
+    - { src: netexec, dest: netexec }
+    - { src: nxcdb, dest: nxcdb }

@@ -1,0 +1,17 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring apt
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'apt_install'
+  
+  roles:
+  - { role: 'system/apt/update', tags: 'apt_install'}
+  - { role: 'system/apt/clean', tags: 'apt_install'}
+  - { role: 'system/apt/autoremove', tags: 'apt_install'}

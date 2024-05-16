@@ -1,0 +1,6 @@
+---
+# tasks file for silent-bridge
+- name: Download silentbridge module tool if not installed on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: 'git clone {{ silentbridge_git }} {{ phy_module_path }}/silentbridge'
+    creates: "{{ phy_module_path }}/silentbridge"

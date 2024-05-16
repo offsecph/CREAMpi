@@ -1,0 +1,34 @@
+---
+# tasks file for impacket
+- name: Download impacket tools on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: 'pipx install impacket'
+    creates: "{{ impacket_path }}/*.py"
+
+- name: Create a directory for impacket tools on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ net_module_path }}/impacket"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+    
+- name: Rename .py to impacket and create hard symlinks on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      for x in `ls {{ impacket_path }}`; \
+      do impacket_tools=`echo impacket-\$x | sed s"/.py//"`; \
+      `cp {{ impacket_path }}/$x {{ net_module_path }}/impacket/\$impacket_tools`; done
+    creates: '{{ net_module_path }}/impacket/*'
+
+- name: Remove old impacket scripts from executable path on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: 'rm -rf {{ exe_path }}/impacket-*'
+    removes: "{{ exe_path }}/impacket-*"
+
+- name: Create impacket symlinks to executable path on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      for x in `ls {{ net_module_path }}/impacket`; \
+      do `ln -s {{ net_module_path }}/impacket/\$x {{ exe_path }}/\$x`; done
+    creates: "{{ exe_path }}/impacket-*"

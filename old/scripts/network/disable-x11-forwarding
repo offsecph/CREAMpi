@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# disable_X11_forwarding.sh - setups the droppi to perform X11 forwarding on remote system
+#
+# Dependencies:
+# - xauth
+# - If client is running on wsl, you might want to add this on linux on wsl:
+#   - `echo "export DISPLAY=localhost:0" >> ~/.bashrc`
+# - On linux client, no need for anything..
+#
+# NOTE:
+# - some gui apps will take some time to load..
+# - for testing, if X11 forwarding is enabled, use `xeyes`
+# - if .Xauthority seems untrusted, use ssh -Y instead of -X
+#
+# WARNING:
+# - x11 forwarding cannot be enabled if system does not have desktop environment installed
+
+check_root() {
+  if [ "$(id -u)" != "0" ]; then
+    echo "ERROR: $0 must be run as root"
+    exit 1
+  fi
+}
+
+disable_x11() {
+  echo "Disabling X11 forwarding on ${HOSTNAME}.."
+  sed -ie '0,/X11Forwarding yes/s//#X11Forwarding yes/' /etc/ssh/sshd_config
+  sed -ie '0,/X11DisplayOffset 10/s//#X11DisplayOffset/' /etc/ssh/sshd_config
+  sed -ie '0,/X11UseLocalhost no/s//#X11UseLocalhost no/' /etc/ssh/sshd_config
+  systemctl restart sshd
+  sleep 1.5
+  echo "X11 forwarding now disabled on the ${HOSTNAME}.."
+}
+
+main() {
+  check_root
+  disable_x11
+}
+
+main

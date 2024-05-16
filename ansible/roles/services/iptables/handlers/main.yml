@@ -1,0 +1,6 @@
+---
+# handlers file for iptables
+- name: Execute iptables service on changes
+  ansible.builtin.service:
+    name: "{{ iptables_service }}"
+    state: restarted

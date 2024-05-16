@@ -1,0 +1,18 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing bloodhound from github
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'bloodhound_git'
+  
+  roles:
+  - { role: 'tools/network/bloodhound-python-github', tags: 'bloodhound_git'}
+  vars:
+    net_module_path: "{{ creampi.tools.network.path.module }}"
+    bloodhound_git: "{{ creampi.tools.network.git.bloodhound }}"

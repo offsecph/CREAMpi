@@ -1,0 +1,8 @@
+---
+# tasks file for rust
+- name: Download rustc and cargo packages on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      curl --proto "=https" --tlsv1.2 -sSf {{ rust_link }} \
+      | sh -s -- -y
+    creates: '/root/.cargo'

@@ -1,0 +1,63 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+## System configuration ------
+- import_playbook: apt.yml
+- import_playbook: scripts.yml
+- import_playbook: host.yml
+- import_playbook: misc.yml
+## Packages ------
+# Consists of required packages
+# to operate in a minimalistic manner
+# using common tools and dependencies needed
+- import_playbook: lib.yml
+- import_playbook: devel.yml
+- import_playbook: net.yml
+- import_playbook: util.yml
+#
+## Service installation ------
+# Security configuration and other utilities
+# needed to function the pi server
+- import_playbook: ecrypt.yml
+- import_playbook: iptables.yml
+- import_playbook: knockd.yml
+- import_playbook: resolved.yml
+- import_playbook: sshd.yml
+- import_playbook: timesyncd.yml
+- import_playbook: sshtun.yml
+#
+## PT Tools ------
+# Internal pt tools that can be used
+# to enumerate, exploit target systems
+# without the need of proxy
+#
+# devel tools
+- import_playbook: go.yml
+- import_playbook: rust.yml
+# network tools
+- import_playbook: bloodhound-repo.yml
+- import_playbook: bloodhound-git.yml
+- import_playbook: igandx-responder.yml
+- import_playbook: legacy-responder.yml
+- import_playbook: impacket.yml
+- import_playbook: netexec.yml
+- import_playbook: rusthound.yml
+# physical tools
+- import_playbook: nacbypass.yml
+- import_playbook: silentbridge.yml
+# scanner tools
+- import_playbook: aquatone.yml
+- import_playbook: gowitness.yml
+- import_playbook: httpx.yml
+- import_playbook: katana.yml
+- import_playbook: nuclei.yml
+- import_playbook: nuclei-templates.yml
+
+## Change default credentials of creampi hosts
+- import_playbook: user.yml
+## Finally, reboot to validate changes
+- import_playbook: reboot.yml

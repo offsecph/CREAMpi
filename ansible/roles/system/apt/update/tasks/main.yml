@@ -1,0 +1,8 @@
+---
+# tasks file for update
+- name: Update and upgrade apt packages on {{ hostname }}
+  ansible.builtin.apt:
+    update_cache: True
+    upgrade: True
+    state: latest
+    force_apt_get: True

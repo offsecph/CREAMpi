@@ -1,0 +1,7 @@
+---
+## -- Provision creampi tools configuration --
+
+- import_playbook: tools/tasks/prereq-modules.yml
+- import_playbook: tools/tasks/physical-modules.yml
+- import_playbook: tools/tasks/scanner-modules.yml
+- import_playbook: tools/tasks/network-modules.yml

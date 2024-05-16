@@ -1,0 +1,29 @@
+---
+# tasks file for httpx
+- name: Download httpx requests tool on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      curl -s {{ httpx_release }} \
+      | grep "browser_download_url.*_linux_arm64.zip" \
+      | head -n1 | cut -d: -f2,3 | sed s"/\"//"g | wget -qi - -P {{ scanner_path }}
+    creates: "{{ scanner_path }}/httpx"
+
+- name: Unpack httpx requests tool on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      unzip {{ scanner_path }}/httpx_*.*.*_linux_arm64.zip -d {{ scanner_path }} \
+      && rm -rf {{ scanner_path }}/httpx_*.*.*_linux_arm64.zip {{ scanner_path }}/*.md
+    creates: "{{ scanner_path }}/httpx"
+
+- name: Ensure python-httpx package is not installed on {{ hostname }}
+  ansible.builtin.apt:
+    name: python3-httpx
+    state: absent
+
+- name: Create httpx symlink on {{ hostname }}
+  ansible.builtin.file:
+    src: "{{ scanner_path }}/{{ item.src }}"
+    dest: "{{ exe_path }}/{{ item.dest }}"
+    state: link
+  loop:
+    - { src: 'httpx', dest: 'httpx' }

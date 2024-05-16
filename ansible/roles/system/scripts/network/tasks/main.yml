@@ -1,0 +1,45 @@
+---
+# tasks file for network
+- name: Create a network directory builtin-scripts to {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ remote_network_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+    recurse: True
+    state: directory
+
+- name: Copy all network scripts to {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_network_path }}/"
+    dest: "{{ remote_network_path }}/"
+    owner: root
+    group: root
+    mode: '0755'
+    force: False
+
+- name: Create network script in executable path on {{ hostname }}
+  ansible.builtin.file:
+    src: "{{ remote_network_path }}/{{ item.src }}"
+    dest: "{{ env_path }}/{{ item.dest }}"
+    state: link
+    force: True
+  loop:
+    - { src: connect-wlan-nmcli, dest: connect-wlan-nmcli }
+    - { src: connect-wpa-supplicant, dest: connect-wpa-supplicant }
+    - { src: disable-dhcpd, dest: disable-dhcpd }
+    - { src: disable-hcibluetooth, dest: disable-hcibluetooth }
+    - { src: disable-hostapd, dest: disable-hostapd }
+    - { src: disable-ipv6, dest: disable-ipv6 }
+    - { src: disable-sshtunnel, dest: disable-sshtunnel }
+    - { src: disable-x11-forwarding, dest: disable-x11-forwarding }
+    - { src: disconnect-wlan-nmcli, dest: disconnect-wlan-nmcli }
+    - { src: disconnect-wpa-supplicant, dest: disconnect-wpa-supplicant }
+    - { src: enable-dhcpd, dest: enable-dhcpd }
+    - { src: enable-hcibluetooth, dest: enable-hcibluetooth }
+    - { src: enable-hostapd, dest: enable-hostapd }
+    - { src: enable-ipv6, dest: enable-ipv6 }
+    - { src: enable-sshtunnel, dest: enable-sshtunnel }
+    - { src: enable-x11-forwarding, dest: enable-x11-forwarding }
+    - { src: set-global-route-metric, dest: set-global-route-metric }

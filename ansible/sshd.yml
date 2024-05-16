@@ -1,0 +1,17 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring SSH daemon
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'sshd_service'
+  
+  roles:
+  - { role: 'services/sshd', tags: 'sshd_service'}
+  vars:
+    remote_conf_path: "{{ creampi.services.sshd.conf.remotePath }}"
+    local_conf_path: "{{ creampi.services.sshd.conf.localPath }}"
+    ssh_conf: "{{ creampi.services.sshd.conf.template }}"

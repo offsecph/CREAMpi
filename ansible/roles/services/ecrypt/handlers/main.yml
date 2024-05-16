@@ -1,0 +1,7 @@
+---
+# handlers file for ecrypt
+- name: Restarting service for script file changes
+  ansible.builtin.service:
+    name: "{{ ecryptfs_service }}"
+    state: restarted
+    enabled: True

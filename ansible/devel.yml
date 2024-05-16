@@ -1,0 +1,15 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Install development packages on {{ hostname }}
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'dev_pkgs'
+  
+  roles:
+  - { role: 'packages/devel', tags: 'dev_pkgs'}

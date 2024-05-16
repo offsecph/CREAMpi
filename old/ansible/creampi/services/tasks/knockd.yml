@@ -1,0 +1,83 @@
+---
+# Load data from config.json
+- import_playbook: ../vars/data.yml
+
+# Configure knockd firewall rules
+- hosts: creampi
+  gather_facts: no
+  tags: 'knockd_service'
+  become: true
+  vars:
+    remote_script_path: "{{ services.knockd.script.remotePath }}"
+    local_script_path: "{{ services.knockd.script.localPath }}"
+    knockd_script: "{{ services.knockd.script.knockd }}"
+    remote_service_path: "{{ services.knockd.service.remotePath }}"
+    local_service_path: "{{ services.knockd.service.localPath }}"
+    knockd_service: "{{ services.knockd.service.knockd }}"
+    knockd_iface_checker: "{{ services.knockd.service.ifaceChecker }}"
+    remote_conf_path: "{{ services.knockd.conf.remotePath }}"
+    local_conf_path: "{{ services.knockd.conf.localPath }}"
+    knockd_conf: "{{ services.knockd.conf.template }}"
+
+  tasks:
+  - name: Ensure knockd is installed on {{ hostname }}
+    ansible.builtin.apt:
+      name: knockd
+      state: latest
+    register: knockd_install
+
+  - name: Copying knockd script on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: false
+      src: "{{ local_script_path }}/{{ knockd_script }}"
+      dest: "{{ remote_script_path }}/{{ knockd_script }}"
+      owner: root
+      group: root
+      mode: '0700'
+      force: true
+
+  - name: Copying knockd configuration file on {{ hostname }}
+    ansible.builtin.template:
+      src: "{{ local_conf_path }}/{{ knockd_conf }}"
+      dest: "{{ remote_conf_path }}/{{ knockd_conf }}"
+      owner: root
+      group: root
+      mode: '0644'
+      force: true
+    register: knockd_conf
+    notify:
+      - Restart knockd on conf file changes
+
+  - name: Copy knockd checker custom service on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: false
+      src: "{{ local_service_path }}/{{ knockd_iface_checker }}"
+      dest: "{{ remote_service_path }}/{{ knockd_iface_checker }}"
+      owner: root
+      group: root
+      mode: '0644'
+      force: true
+    register: knockd_checker_service
+
+  - name: Ensure to reload systemd daemon for changes on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: 'systemctl daemon-reload'
+    when: knockd_checker_service.changed
+
+  - name: Starting knockd service on {{ hostname }}
+    ansible.builtin.service:
+      name: "{{ knockd_service }}"
+      state: started
+      enabled: true
+
+  - name: Starting knockd checker service on {{ hostname }}
+    ansible.builtin.service:
+      name: "{{ knockd_iface_checker }}"
+      state: started
+      enabled: true
+
+  handlers:
+    - name: Restart knockd on conf file changes
+      ansible.builtin.service:
+        name: "{{ knockd_service }}"
+        state: restarted

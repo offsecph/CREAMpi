@@ -1,0 +1,10 @@
+[Unit]
+Description=Netfilter iptables persistence service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/iptables-restore /etc/iptables/rules.v4
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target

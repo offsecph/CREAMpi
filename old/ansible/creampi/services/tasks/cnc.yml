@@ -1,0 +1,202 @@
+---
+# Load data from config.json
+- import_playbook: ../vars/data.yml
+
+# Configure C2 connection
+- hosts: creampi
+  gather_facts: false
+  tags: 'cnc_service'
+  become: true
+  vars:
+    remote_script_path: "{{ services.cnc.script.remotePath }}"
+    local_script_path: "{{ services.cnc.script.localPath }}"
+    cnc_script: "{{ services.cnc.script.commandAndControl }}"
+    cnc_cleanup_script: "{{ services.cnc.script.cleanup }}"
+    remote_service_path: "{{ services.cnc.service.remotePath }}"
+    local_service_path: "{{ services.cnc.service.localPath }}"
+    cnc_service: "{{ services.cnc.service.commandAndControl }}"
+    cnc_timer: "{{ services.cnc.service.timer }}"
+    cnc_cleanup_service: "{{ services.cnc.service.cleanup }}"
+    remote_key_path: "{{ services.cnc.key.remotePath }}"
+    local_key_path:  "{{ services.cnc.key.localPath }}"
+    current_keyfile_config: "{{ services.cnc.key.currentConfig }}"
+    current_remote_server: "{{ services.cnc.defaults.remoteServer }}"
+    default_tun_port: "{{ services.cnc.defaults.tunnelPort }}"
+    default_mon_port: "{{ services.cnc.defaults.monitorPort }}"
+
+
+  tasks:
+  - name: Ensure scripts startup directory is present on {{ hostname }}
+    ansible.builtin.file:
+      path: "{{ remote_script_path }}"
+      owner: root
+      group: root
+      mode: '0700'
+      recurse: yes
+      state: directory
+
+  - name: Ensure that autossh is installed on {{ hostname }}
+    ansible.builtin.apt:
+      name: autossh
+      state: latest
+    register: autossh_result
+
+  - name: Check if cnc service is installed on {{ hostname }}
+    ansible.builtin.stat: 
+      path: "{{ remote_service_path }}/{{ cnc_service }}"
+    register: cnc_service_status
+  # - debug:
+  #     msg: "{{ cnc_service_status }}"
+
+  - name: Ensure that cnc service is turned off if installed on {{ hostname }}
+    ansible.builtin.service:
+      name: "{{ cnc_service }}"
+      state: stopped
+    when: cnc_service_status.stat.exists
+    register: cnc_service_stopped
+
+  - name: Copy default CNC script file on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: false
+      src: "{{ local_script_path }}/{{ cnc_script }}"
+      dest: "{{ remote_script_path }}"
+      owner: root
+      group: root
+      mode: '0700'
+      force: true
+
+  - name: Copy default CNC script file on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: false
+      src: "{{ local_script_path }}/{{ cnc_cleanup_script }}"
+      dest: "{{ remote_script_path }}"
+      owner: root
+      group: root
+      mode: '0700'
+      force: true
+
+  - name: Copy CNC custom service on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: false
+      src: "{{ local_service_path }}/{{ cnc_service }}"
+      dest: "{{ remote_service_path }}"
+      owner: root
+      group: root
+      mode: '0644'
+      force: true
+    register: cnc_service_config
+
+  - name: Copy CNC persistence timer on {{ hostname }}
+    ansible.builtin.template:
+      remote_src: false
+      src: "{{ local_service_path }}/{{ cnc_timer }}"
+      dest: "{{ remote_service_path }}"
+      owner: root
+      group: root
+      mode: '0644'
+      force: true
+    register: cnc_timer_config
+    notify:
+      - Restart service addon callhome persistence
+
+  - name: Copy CNC cleanup service on {{ hostname }}
+    ansible.builtin.template:
+      remote_src: false
+      src: "{{ local_service_path }}/{{ cnc_cleanup_service }}"
+      dest: "{{ remote_service_path }}"
+      owner: root
+      group: root
+      mode: '0644'
+      force: true
+    register: cnc_cleanup_config
+    notify:
+      - Restart service addon callhome cleanup service
+
+  - name: Copying private key on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: false
+      src: "{{ local_key_path }}/{{ key_file }}"
+      dest: "{{ remote_key_path }}/{{ key_file }}"
+      owner: root
+      group: root
+      mode: '0400'
+      force: true
+
+  - name: Changing CNC server configuration on {{ hostname }}
+    ansible.builtin.replace:
+      path: "{{ remote_script_path }}/{{ cnc_script }}"
+      regexp: "{{ current_remote_server }}"
+      replace: '{{ remote_server }}'
+    register: cnc_server_output
+    notify: 
+      - Restart script file changes
+
+  - name: Changing CNC keyfile configuration on {{ hostname }}
+    ansible.builtin.replace:
+      path: "{{ remote_script_path }}/{{ cnc_script }}"
+      regexp: "{{ remote_key_path }}/{{ current_keyfile_config }}"
+      replace: "{{ remote_key_path }}/{{ key_file }}"
+    register: cnc_keyfile_output
+    notify: 
+      - Restart script file changes
+  
+  - name: Chaning tunnel port configuration on {{ hostname }}
+    ansible.builtin.replace:
+      path: "{{ remote_script_path }}/{{ cnc_script }}"
+      regexp: "{{ default_tun_port }}"
+      replace: "{{ tunnel_port }}"
+    register: cnc_tunport_output
+    notify:
+      - Restart script file changes
+
+  - name: Chaning autossh monitor port configuration on {{ hostname }}
+    ansible.builtin.replace:
+      path: "{{ remote_script_path }}/{{ cnc_script }}"
+      regexp: "{{ default_mon_port }}"
+      replace: "{{ monitor_port }}"
+    register: cnc_tunport_output
+    notify:
+      - Restart script file changes
+
+  - name: Ensure to reload systemd daemon configuration changes on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: 'systemctl daemon-reload'
+    when: cnc_service_config.changed
+
+  - name: Starting callhome service on {{ hostname }}
+    ansible.builtin.service:
+      name: "{{ cnc_service }}"
+      state: restarted
+      enabled: true
+      
+  - name: Starting callhome-persistence service on {{ hostname }}
+    ansible.builtin.service:
+      name: "{{ cnc_timer }}"
+      state: restarted
+      enabled: true
+    register: cnc_service_restarted
+
+  - name: Check CNC connectivity on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: |
+        sleep 5 && \
+        netstat -plnt \
+        | grep -E 22\([0-9]\{1,2\}\)
+    register: cnc_connection_test
+  - debug: var=cnc_connection_test.stdout_lines
+
+  handlers:
+    - name: Restart script file changes
+      ansible.builtin.service:
+        name: "{{ cnc_service }}"
+        state: restarted
+
+    - name: Restart service addon callhome persistence
+      ansible.builtin.service:
+        name: "{{ cnc_timer }}"
+        state: restarted
+
+    - name: Restart service addon callhome cleanup service
+      ansible.builtin.service:
+        name: "{{ cnc_cleanup_service }}"
+        state: restarted

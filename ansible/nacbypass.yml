@@ -1,0 +1,18 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing nac bypass module
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'nac_bypass'
+  
+  roles:
+  - { role: 'tools/physical/nac-bypass', tags: 'nac_bypass'}
+  vars:
+    phy_module_path: "{{ creampi.tools.physical.path.module }}"
+    nac_bypass_git: "{{ creampi.tools.physical.git.nacBypass }}"

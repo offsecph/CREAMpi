@@ -1,0 +1,110 @@
+---
+# Load data from config.json
+- import_playbook: ../vars/data.yml
+
+# Configure ecrypt directory encryption
+- hosts: creampi
+  gather_facts: false
+  tags: 'ecryptfs_service'
+  become: true
+  vars:
+    remote_script_path: "{{ services.ecrypt.script.remotePath }}"
+    local_script_path: "{{ services.ecrypt.script.localPath }}"
+    ecryptfs_script: "{{ services.ecrypt.script.ecryptfs }}"
+    ecryptfs_umount: "{{ services.ecrypt.script.umountfs }}" 
+    remote_service_path: "{{ services.ecrypt.service.remotePath }}"
+    local_service_path: "{{ services.ecrypt.service.localPath }}"
+    ecryptfs_service: "{{ services.ecrypt.service.ecryptfs }}"
+
+  tasks:
+  - name: Ensure ecryptfs is installed on {{ hostname }}
+    ansible.builtin.apt:
+      name: ecryptfs-utils
+      state: latest
+    register: ecryptfs_result
+
+  - name: Ensure scripts directory is present on {{ hostname }}
+    ansible.builtin.file:
+      path: "{{ remote_script_path }}"
+      owner: root
+      group: root
+      mode: '0755'
+      recurse: yes
+      state: directory
+
+  - name: Ensure service is not running {{ hostname }}
+    ansible.builtin.service:
+      name: "{{ ecryptfs_service }}"
+      state: stopped
+    ignore_errors: true
+    no_log: true
+
+  - name: Create a directory for encryption on {{ hostname }}
+    ansible.builtin.file:
+      path: '/root/Private'
+      owner: root
+      group: root
+      mode: '0700'
+      state: directory
+
+  - name: Copying ecryptfs script on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: false
+      src: "{{ local_script_path }}/{{ ecryptfs_script }}"
+      dest: "{{ remote_script_path }}/{{ ecryptfs_script }}"
+      owner: root
+      group: root
+      mode: '0700'
+      force: true
+    register: ecrypt_script
+    notify:
+      - Restarting service for script file changes
+
+  - name: Copying ecryptfs-unmount script on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: false
+      src: "{{ local_script_path }}/{{ ecryptfs_umount }}"
+      dest: "{{ remote_script_path }}/{{ ecryptfs_umount }}"
+      owner: root
+      group: root
+      mode: '0700'
+      force: true
+
+  - name: Copying ecryptfs persistence service on {{ hostname }}
+    ansible.builtin.copy:
+      remote_src: false
+      src: "{{ local_service_path }}/{{ ecryptfs_service }}"
+      dest: "{{ remote_service_path }}/{{ ecryptfs_service }}"
+      owner: root
+      group: root
+      mode: '0644'
+      force: true
+    register: ecrypt_service
+
+  - name: Changing ecryptphrase configuration on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: |
+        data=`echo {{ mount_phrase }} | base64`
+        sed -i s"/data=.*/data=\'${data}\'/" \
+        {{ remote_script_path }}/{{ ecryptfs_script }}
+    register: ecrypt_data
+    notify: 
+      - Restarting service for script file changes
+
+  - name: Ensure to reload systemd daemon for changes on {{ hostname }}
+    ansible.builtin.shell:
+      cmd: 'systemctl daemon-reload'
+    when: ecrypt_service.changed
+
+  - name: Starting ecrypt service
+    ansible.builtin.service:
+      name: "{{ ecryptfs_service }}"
+      state: started
+      enabled: true
+
+  handlers:
+  - name: Restarting service for script file changes
+    ansible.builtin.service:
+      name: "{{ ecryptfs_service }}"
+      state: restarted
+      enabled: true

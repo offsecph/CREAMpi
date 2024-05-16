@@ -1,0 +1,10 @@
+[Unit]
+Description=SSH Tunnel persistence checker
+
+[Timer]
+OnBootSec=15m
+OnUnitActiveSec=30s
+Unit=sshtunnel.service
+
+[Install]
+WantedBy=default.target

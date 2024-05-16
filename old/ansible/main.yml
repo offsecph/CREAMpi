@@ -1,0 +1,12 @@
+---
+# Provision CREAMpi configuration across hosts
+  - name: Started Provisioning CREAMpi hosts. Please wait patiently..
+    hosts: creampi
+    gather_facts: true
+
+  # CREAMpi provisioning modules
+  - import_playbook: creampi/system.yml
+  - import_playbook: creampi/packages.yml
+  - import_playbook: creampi/tools.yml
+  - import_playbook: creampi/services.yml
+  - import_playbook: creampi/reboot.yml

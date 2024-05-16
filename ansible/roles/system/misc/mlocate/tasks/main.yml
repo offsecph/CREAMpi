@@ -1,0 +1,5 @@
+---
+# tasks file for mlocate
+  - name: Update system mlocate database on {{ hostname }}
+    ansible.builtin.command: updatedb
+    register: updatedb_output

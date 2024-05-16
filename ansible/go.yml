@@ -1,0 +1,18 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing go
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'devel_modules'
+  
+  roles:
+  - { role: 'tools/devel/go', tags: 'devel_modules' }
+  vars:
+    temp_path: "{{ creampi.tools.devel.path.temp }}"
+    go_path: "{{ creampi.tools.devel.path.go }}"
+    go_link: "{{ creampi.tools.devel.link.go }}"
+    exe_path: "{{ creampi.tools.devel.path.executable }}"

@@ -1,0 +1,24 @@
+---
+# tasks file for katana
+- name: Download katana web crawler tool on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      curl -s {{ katana_release }} \
+      | grep "browser_download_url.*_linux_arm64.zip" \
+      | head -n1 | cut -d: -f2,3 | sed "s/\"//g" | wget -qi - -P {{ scanner_path }}
+    creates: "{{ scanner_path }}/katana"
+
+- name: Unpack katana web crawler tool on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      unzip {{ scanner_path }}/katana_*.*.*_linux_arm64.zip -d {{ scanner_path }} \
+      && rm -rf {{ scanner_path }}/katana_*.*.*_linux_arm64.zip {{ scanner_path }}/*.md
+    creates: "{{ scanner_path }}/katana"
+
+- name: Create katana symlink on {{ hostname }}
+  ansible.builtin.file:
+    src: "{{ scanner_path }}/{{ item.src }}"
+    dest: "{{ exe_path }}/{{ item.dest }}"
+    state: link
+  loop:
+    - { src: 'katana', dest: 'katana' }

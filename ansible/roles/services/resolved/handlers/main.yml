@@ -1,0 +1,6 @@
+---
+# handlers file for resolved
+- name: Restart resolved on conf file changes
+  ansible.builtin.service:
+    name: systemd-resolved
+    state: restarted

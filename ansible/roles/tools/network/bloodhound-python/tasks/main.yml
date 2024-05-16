@@ -1,0 +1,10 @@
+---
+# tasks file for bloodhound-python
+- name: Download bloodhound-python ingestor on {{ hostname }}
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: latest
+    force_apt_get: true
+  with_items:
+    - bloodhound.py
+  register: apt_result

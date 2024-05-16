@@ -1,0 +1,19 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing nuclei-templates
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'scanner_templates'
+  
+  roles:
+  - { role: 'tools/scanner/nuclei-templates', tags: 'scanner_templates'}
+  vars:
+    exe_path: "{{ creampi.tools.scanner.path.executable }}"
+    scanner_path: "{{ creampi.tools.scanner.path.scanner }}"
+    nuclei_templates_git: "{{ creampi.tools.scanner.git.nucleiTemplates }}"

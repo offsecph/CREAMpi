@@ -1,0 +1,26 @@
+
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Modifying default user and root user on {{ hostname }}
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'users_result'
+
+  tasks:
+  - name: Update password for {{ ansible_user }} user on {{ hostname }}
+    ansible.builtin.user:
+      name: "{{ ansible_user }}"
+      state: present
+      password: "{{ user_password | password_hash('sha512') }}"
+
+  - name: Update password for root user on {{ hostname }}
+    ansible.builtin.user:
+      name: 'root'
+      state: present
+      password: "{{ root_password | password_hash('sha512') }}"

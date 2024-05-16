@@ -1,0 +1,34 @@
+---
+# tasks file for hardware
+- name: Create a hardware directory builtin-scripts to {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ remote_hardware_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+    recurse: True
+    state: directory
+
+- name: Copy all hardware scripts to {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_hardware_path }}/"
+    dest: "{{ remote_hardware_path }}/"
+    owner: root
+    group: root
+    mode: '0755'
+    force: False
+
+- name: Create hardware script in executable path on {{ hostname }}
+  ansible.builtin.file:
+    src: "{{ remote_hardware_path }}/{{ item.src }}"
+    dest: "{{ env_path }}/{{ item.dest }}"
+    state: link
+    force: True
+  loop:
+    - { src: check-temp, dest: check-temp }
+    - { src: check-cpuinfo, dest: check-cpuinfo }
+    - { src: check-memsplit, dest: check-memsplit }
+    - { src: check-storage, dest: check-storage }
+    - { src: enable-disable-led, dest: enable-disable-led }
+    - { src: enable-disable-bluetooth, dest: enable-disable-bluetooth }

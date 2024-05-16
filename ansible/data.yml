@@ -1,0 +1,14 @@
+---
+- name: "Read data files"
+  hosts: creampi
+  become: True
+  vars_files:
+    - "{{ data_path }}/config.json"
+  tasks:
+    - name: save the Json data to a Variable as a Fact
+      set_fact:
+        creampi: "{{ creampi }}"
+        cacheable: yes
+
+    # - debug:
+    #     msg: "{{ creampi }}"

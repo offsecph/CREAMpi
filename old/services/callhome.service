@@ -1,0 +1,15 @@
+[Unit]
+Description=Command and control service
+After=network.target
+
+[Service]
+Type=forking
+User=root
+ExecStart=/opt/scripts/startup/callhome.sh start
+ExecReload=/opt/scripts/startup/callhome.sh restart
+ExecStop=/opt/scripts/startup/callhome.sh stop
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

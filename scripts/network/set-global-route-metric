@@ -1,0 +1,81 @@
+#!/bin/bash
+#
+# set_global_route_metric.sh - Redirect network packets to specific interface
+#
+#
+# You can set values like disabled on the interface if only one exist.
+# Note:
+#   setting route metric can be useful to redirect traffic to a specific 
+#   network interface i.e. traffic priority to wlan0 instead of eth0.
+#   
+#   you may still set route metric on a single interface by disabling 
+#   the other one.
+#
+#   the lower the value, the higher the priority.
+
+INTERFACE_1=wlan0
+INTERFACE_2=eth1
+
+PRIORITY_1=0
+PRIORITY_2=200
+
+check_root() {
+  if [ "$(id -u)" != "0" ]; then
+    echo "ERROR: $0 must be run as root"
+    exit 1
+  fi
+}
+
+check_valid_interfaces() {
+  INTERFACES=("disabled ")
+  INTERFACES+=$(ip route list | grep -v default | awk '{print $3}' | sort -u)
+
+  if [[ ! ${INTERFACES[*]} =~ ${INTERFACE_1} ]] || [[ ! ${INTERFACES[*]} =~ ${INTERFACE_2} ]]; then
+    echo "ERROR: INTERFACE configuration error for $0."
+    exit
+  else
+   echo "Setting priority for routes.."
+  fi
+}
+
+set_global_route_metric() {
+  if [ ${INTERFACE_1} == disabled ] && [ ${INTERFACE_2} != disabled ]; then
+    INTERFACE_2="$(nmcli -t -f NAME,DEVICE con show | awk -F: "/${INTERFACE_2}/ {print $1}" | cut -d: -f1 2>/dev/null)"
+    
+    nmcli con mod "${INTERFACE_2}" ipv4.route-metric ${PRIORITY_2} ipv6.route-metric ${PRIORITY_2}
+    sleep 1
+    nmcli con up "${INTERFACE_2}"
+    sleep 1
+    route -n
+  elif [ ${INTERFACE_2} == disabled ] && [ ${INTERFACE_1} != disabled ]; then
+    INTERFACE_1="$(nmcli -t -f NAME,DEVICE con show | awk -F: "/${INTERFACE_1}/ {print $1}" | cut -d: -f1 2>/dev/null)"
+
+    echo "${INTERFACE_1}"
+    nmcli con mod "${INTERFACE_1}" ipv4.route-metric ${PRIORITY_1} ipv6.route-metric ${PRIORITY_1}
+    sleep 1
+    nmcli con up "${INTERFACE_1}"
+    sleep 1
+    route -n
+
+  elif [ ${INTERFACE_1} != disabled ] || [ ${INTERFACE_2} != disabled ]; then
+    INTERFACE_1=$(nmcli -t -f NAME,DEVICE con show | awk -F: "/${INTERFACE_1}/ {print $1}" cut -d: -f1 2>/dev/null)
+    INTERFACE_2=$(nmcli -t -f NAME,DEVICE con show | awk -F: "/${INTERFACE_2}/ {print $1}" cut -d: -f1 2>/dev/null)
+   
+    nmcli con mod "${INTERFACE_1}" ipv4.route-metric ${PRIORITY_1} ipv6.route-metric ${PRIORITY_1}
+    sleep 1
+    nmcli con up "${INTERFACE_1}"
+    nmcli con mod "${INTERFACE_2}" ipv4.route-metric ${PRIORITY_2} ipv6.route-metric ${PRIORITY_2}
+    sleep 1
+    nmcli con up "${INTERFACE_2}"
+    sleep 1
+    route -n
+  fi
+}
+
+main() {
+  check_root
+  check_valid_interfaces
+  set_global_route_metric
+}
+
+main

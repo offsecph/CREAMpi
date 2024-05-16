@@ -1,0 +1,27 @@
+---
+# tasks file for util
+  - name: Install utility packages on {{ hostname }}
+    ansible.builtin.apt: 
+      name: "{{ item }}" 
+      state: latest
+      force_apt_get: true
+    with_items:
+      - zip
+      - duf
+      - htop 
+      - file
+      - dkms
+      - tmux
+      - lshw
+      - bzip2
+      - unzip
+      - unrar
+      - chafa
+      - lolcat
+      - bsdutils
+      - usbutils
+      - chromium
+      - p7zip-full
+      - firefox-esr
+      - libraspberrypi-bin
+    register: util_result

@@ -1,0 +1,11 @@
+---
+# tasks file for hostname
+- name: Update new hostname on {{ hostname }}
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
+    
+- name: Update new hostname in /etc/hosts on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ hosts_file }}"
+    regexp: "{{ default_hostname }}"
+    replace: "{{ hostname }}"

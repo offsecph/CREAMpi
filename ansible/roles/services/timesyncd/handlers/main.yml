@@ -1,0 +1,6 @@
+---
+# handlers file for timesyncd
+- name: Restart timesyncd on conf file changes
+  ansible.builtin.service:
+    name: systemd-timesyncd
+    state: restarted
