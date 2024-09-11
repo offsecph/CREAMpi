@@ -9,6 +9,8 @@
     - nmap
     - ipcalc
     - iperf3
+    - telnet
+    - smbmap
     - tcpdump
     - hostapd
     - dnsrecon

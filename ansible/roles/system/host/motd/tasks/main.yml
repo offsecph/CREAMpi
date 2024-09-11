@@ -2,14 +2,14 @@
 # tasks file for motd
 - name: Create a backup for motd banner on {{ hostname }}
   ansible.builtin.copy:
-    remote_src: True
-    src: "{{ motd_path }}"
-    dest: "{{ motd_path }}.bak"
-    force: False
+    remote_src: False
+    src: "{{ motd_path }}/{{ motd_file }}"
+    dest: "{{ motd_path }}/{{ motd_file }}.bak"
+    force: True
 
 - name: Configure new motd banner on {{ hostname }}
   ansible.builtin.copy:
     remote_src: False
     src: "{{ template }}/{{ motd_file }}"
     dest: "{{ motd_path }}/{{ motd_file }}"
-    force: False
+    force: True

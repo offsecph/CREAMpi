@@ -1,0 +1,9 @@
+/data/inventory.bak
+/files/id.ed25519
+/files/id_ed25519
+/files/*ed25519
+/files/id.rsa
+/files/id_rsa
+/files/*rsa
+/files/*.ovpn
+

@@ -3,13 +3,13 @@
 - name: Create a backup for login banner on {{ hostname }}
   ansible.builtin.copy:
     remote_src: True
-    src: "{{ issue_path }}"
-    dest: "{{ issue_path }}.bak"
-    force: False
+    src: "{{ issue_path }}/{{ issue_file }}"
+    dest: "{{ issue_path }}/{{ issue_file }}.bak"
+    force: True
 
 - name: Configure new login banner on {{ hostname }}
   ansible.builtin.copy:
     remote_src: False
     src: "{{ template }}/{{ issue_file }}"
     dest: "{{ issue_path }}/{{ issue_file }}"
-    force: False
+    force: True

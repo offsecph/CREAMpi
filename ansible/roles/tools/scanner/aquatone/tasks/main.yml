@@ -1,6 +1,6 @@
 ---
 # tasks file for aquatone
-- name: Create a directory for scanner tools on {{ hostname }}
+- name: Ensure directory for scanner tools is on {{ hostname }}
   ansible.builtin.file:
     path: "{{ scanner_path }}"
     owner: root

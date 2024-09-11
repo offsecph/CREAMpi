@@ -163,7 +163,11 @@
                     "remotePath": "/etc/systemd",
                     "localPath": "../conf/resolved",
                     "template": "resolved.conf"
-                }
+                },
+
+		"script": {
+		    "remotePath": "/opt/scripts/startup"
+		}
             },
     
             "sshd": {
@@ -171,7 +175,11 @@
                     "remotePath": "/etc/ssh",
                     "localPath": "../conf/sshd",
                     "template": "sshd_config"
-                }
+                },
+
+		"script": {
+		    "remotePath": "/opt/scripts/startup"
+		}
             },
     
             "timesyncd": {
@@ -179,7 +187,12 @@
                     "remotePath": "/etc/systemd",
                     "localPath": "../conf/timesyncd",
                     "template": "timesyncd.conf"
-                }
+                },
+
+		"script": {
+		    "remotePath":"/opt/scripts/startup"
+		}
+
             }
         },
 
@@ -193,7 +206,8 @@
     
                 "link": {
                     "go": "https://go.dev/dl",
-                    "rust": "https://sh.rustup.rs"
+                    "rust": "https://sh.rustup.rs",
+		    "pip2": "https://bootstrap.pypa.io/pip/2.7/get-pip.py"
                 }
             },
     
@@ -221,7 +235,11 @@
                     "bloodhound": "https://github.com/dirkjanm/BloodHound.py",
                     "rusthound": "https://github.com/NH-RED-TEAM/RustHound",
                     "netexec": "https://github.com/Pennyw0rth/NetExec"
-                }
+                },
+		
+		"releases": {
+		    "sliverServer": "https://api.github.com/repos/BishopFox/sliver/releases"
+		}
             },
     
             "scanner": {

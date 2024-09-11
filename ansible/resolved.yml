@@ -12,6 +12,7 @@
   roles:
   - { role: 'services/resolved', tags: 'resolved_service'}
   vars:
+    remote_script_path: "{{ creampi.services.resolved.script.remotePath }}"
     remote_conf_path: "{{ creampi.services.resolved.conf.remotePath }}"
     local_conf_path: "{{ creampi.services.resolved.conf.localPath }}"
     resolved_conf: "{{ creampi.services.resolved.conf.template }}"

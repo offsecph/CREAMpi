@@ -22,7 +22,7 @@
 ## Service installation ------
 # Security configuration and other utilities
 # needed to function the pi server
-- import_playbook: ecrypt.yml
+# - import_playbook: ecrypt.yml      ### deprecated from debian repository
 - import_playbook: iptables.yml
 - import_playbook: knockd.yml
 - import_playbook: resolved.yml
@@ -39,11 +39,15 @@
 # devel tools
 - import_playbook: go.yml
 - import_playbook: rust.yml
-# network tools
+- import_playbook: pip2.yml
+  # network tools
 - import_playbook: bloodhound-repo.yml
 - import_playbook: bloodhound-git.yml
+- import_playbook: bloodhound-ce.yml
 - import_playbook: igandx-responder.yml
 - import_playbook: legacy-responder.yml
+- import_playbook: sliver-server.yml
+- import_playbook: metasploit.yml
 - import_playbook: impacket.yml
 - import_playbook: netexec.yml
 - import_playbook: rusthound.yml

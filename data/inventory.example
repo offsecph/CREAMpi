@@ -15,16 +15,16 @@
 ;;  `ovpn_file` is the ovpn file from the files directory for uploading and used as vpn key.
 ;;  `mount_phrase` will be used to configure ecryptfs passphrase for folder encryption
 [creampi]
-192.168.1.250    hostname='' tunnel_port='' monitor_port='0' mount_phrase='' ovpn_file=''
-;192.168.1.251    hostname='' tunnel_port='' monitor_port='0' mount_phrase='' ovpn_file=''
+192.168.30.254    hostname='CREAMpi-zero' tunnel_port='20000' monitor_port='0' mount_phrase='ecryptPassword' ovpn_file=''
+;192.168.30.185    hostname='CREAMpi4-one' tunnel_port='20001' monitor_port='0' mount_phrase='' ovpn_file=''
 
 ;; [hosts:vars] will use the same configuration for all raspberry pi for provisioning.
 ;; to set a different values per server, remove vars below and align them above along
 ;; with the hostname or IP address of the server
 [creampi:vars]
-root_password=''
-user_password=''
-remote_user=''
-remote_server=''
-tunnel_service=''
-key_file=''
+root_password='yourrootpassword'
+user_password='youruserpassword'
+remote_user='root'
+remote_server='publicIP_or_domainName'
+tunnel_service='ssh'
+key_file='id_rsa'

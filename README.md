@@ -17,14 +17,32 @@
 ---
 ## Provision CREAMpi via Ansible
 
-- Flash minimal installation of kali raspberry pi minimal on balena etcher
-- Run ansible-playbook `main.yml` to provision base install of CREAMpi 
+- Create a minimal installation image of kali rpi from kali build scripts
+- Flash the minimal image of raspberry pi on SD card and run the device
+- Run `ansible-playbook main.yml` to provision base install of CREAMpi
 
 ---
+### UPDATE:
+
+```
+v1.1
+09/11/2024 - ecryptfs-utils is deprecated from repository and is not supported anymore.
+           - Added bloodhound-ce ingestor
+           - Added sliver server
+           - Added metasploit framework
+           - Added repo tools:
+                * smbmap
+                * hashcat
+                * python2
+                * seclists
+                * wordlists
+                * python2-pip
+```
+
+--- 
 ### Accessing CREAMpi via SSH after provisioning
 
-CREAMpi stateful firewall is enabled by default. Knock on port sequence to access
-ssh configuration.
+CREAMpi stateful firewall is enabled by default. Knock on port sequence to access server via ssh.
 ```sh
 knock <CREAMpi-IP> 69 69 69 -d 500
 ssh username@CREAMpi
@@ -98,7 +116,16 @@ ansible-playbook main.yml --extra-vars "ansible_user=kali ansible_password=kali 
 6. Have a coffee break! ☕
 
 ---
-### Build kali raspberry pi minimal via kali build scripts
+### Troubleshooting:
+Known Issues:
+
+- *ansible hangs when trying to install netexec (pipx netexec)*
+```
+Just rerun the script.
+```
+
+---
+### Building kali raspberry pi minimal via kali build scripts
 
 ***Running on raspbery pi os or previous kali raspberry pi or CREAMpi image***
 
@@ -146,6 +173,8 @@ sudo ./raspberry-pi5.sh --arch arm64 --minimal
 ---
 
 ## Resources:
+---
 https://www.linuxtechi.com/replace-strings-lines-with-ansible/
 https://ansible.readthedocs.io/projects/lint/rules/no-changed-when/
 https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_checkmode.html
+---

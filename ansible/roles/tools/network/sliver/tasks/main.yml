@@ -1,0 +1,17 @@
+---
+# tasks file for sliver
+- name: Ensure directory for sliver is on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ net_module_path }}/sliver"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+- name: Download sliver c2 server on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      curl -s {{ sliver_server_release }} \
+      | grep "browser_download_url.*sliver-server_linux" \
+      | head -n2 | cut -d: -f2,3 | tr -d "\"" | wget -qi - -P "{{ net_module_path }}/sliver"
+    creates: "{{ net_module_path }}/sliver/sliver-server_linux"

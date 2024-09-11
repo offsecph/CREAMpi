@@ -5,11 +5,11 @@
     data_path: "../data/"
   tags: 'data'
 
-- name: Installing bloodhound from repository
+- name: Installing metasploit framework
   hosts: creampi
   gather_facts: False
   become: True
-  tags: 'bloodhound_apt'
-  
+  tags: 'metasploit_framework'
+
   roles:
-  - { role: 'tools/network/bloodhound-python-ingestor', tags: 'bloodhound_apt'}
+  - { role: 'tools/network/metasploit', tags: 'metasploit_framework'}

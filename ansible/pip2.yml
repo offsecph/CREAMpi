@@ -1,0 +1,18 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing pip2-python
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'pip2_python'
+
+  roles:
+  - { role: 'tools/devel/python2', tags: 'pip2_python'}
+  vars:
+    temp_path: "{{ creampi.tools.devel.path.temp }}"
+    pip_link: "{{ creampi.tools.devel.link.pip2 }}"

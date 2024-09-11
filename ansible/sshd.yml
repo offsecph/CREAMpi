@@ -12,6 +12,7 @@
   roles:
   - { role: 'services/sshd', tags: 'sshd_service'}
   vars:
+    remote_script_path: "{{ creampi.services.sshd.script.remotePath }}"
     remote_conf_path: "{{ creampi.services.sshd.conf.remotePath }}"
     local_conf_path: "{{ creampi.services.sshd.conf.localPath }}"
     ssh_conf: "{{ creampi.services.sshd.conf.template }}"

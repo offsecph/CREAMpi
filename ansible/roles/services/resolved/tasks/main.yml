@@ -6,6 +6,15 @@
     state: latest
   register: resolved_service
 
+- name: Ensure scripts directory is present on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+    recurse: True
+    state: directory
+
 - name: Copying configuration template for resolved on {{ hostname }}
   ansible.builtin.template:
     src: "{{ local_conf_path }}/{{ resolved_conf }}"

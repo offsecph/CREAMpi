@@ -18,9 +18,12 @@
       - unrar
       - chafa
       - lolcat
+      - hashcat
       - bsdutils
       - usbutils
       - chromium
+      - seclists
+      - wordlists
       - p7zip-full
       - firefox-esr
       - libraspberrypi-bin

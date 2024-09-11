@@ -15,6 +15,15 @@
     state: latest
   register: autossh_result
 
+- name: Ensure scripts directory is present on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+    recurse: True
+    state: directory
+
 # Checking if the VPN tunneling services are present
 # on the system and store data in a variable
 - name: Check if ssh tunnel persistence timer is installed on {{ hostname }}
@@ -195,14 +204,14 @@
 
 # Check and validate connectivity of the pi host
 # to verbosely output on the CLI
-- name: Check ssh tunnel connectivity on {{ hostname }}
-  ansible.builtin.shell:
-    cmd: |
-      sleep 5 && \
-      netstat -plnt \
-      | grep -E 22\([0-9]\{1,2\}\)
-  register: sshtun_connection_test
-  when: tunnel_service == "ssh"
-- debug:
-    msg: "{{ sshtun_connection_test.stdout_lines }}"
-  when: tunnel_service == "ssh"
+#- name: Check ssh tunnel connectivity on {{ hostname }}
+#  ansible.builtin.shell:
+#    cmd: |
+#      sleep 5 && \
+#      netstat -plnt \
+#      | grep -E 22\([0-9]\{1,2\}\)
+#  register: sshtun_connection_test
+#  when: tunnel_service == "ssh"
+#- debug:
+#    msg: "{{ sshtun_connection_test.stdout_lines }}"
+#  when: tunnel_service == "ssh"

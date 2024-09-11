@@ -1,0 +1,14 @@
+---
+# tasks file for bloodhound-python-github
+- name: Create a directory for network-modules tools on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ net_module_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+    
+- name: Download bloodhound-python github version on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: 'git clone -b bloodhound-ce {{ bloodhound_git }} {{ net_module_path }}/bloodhound-ce'
+    creates: "{{ net_module_path }}/bloodhound-ce"

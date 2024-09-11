@@ -1,0 +1,20 @@
+---
+# tasks file for python2
+- name: Download get-pip on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      curl -s {{ pip_link }} \
+      --output /tmp/get-pip.py \
+      && python2 /tmp/get-pip.py
+    creates: "{{ temp_path }}/get-pip.py"
+
+- name: Upgrade and setup pip2
+  ansible.builtin.shell:
+    cmd: |
+      pip2 install --upgrade pip \
+      && pip2 install wheel setuptools
+
+- name: Install python2-virtualenv
+  ansible.builtin.shell:
+    cmd: |
+      pip2 install virtualenv

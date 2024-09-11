@@ -12,6 +12,7 @@
   roles:
   - { role: 'services/timesyncd', tags: 'timesyncd_service' }
   vars:
+    remote_script_path: "{{ creampi.services.timesyncd.script.remotePath }}"
     remote_conf_path: "{{ creampi.services.timesyncd.conf.remotePath }}"
     local_conf_path: "{{ creampi.services.timesyncd.conf.localPath }}"
     timesyncd_conf: "{{ creampi.services.timesyncd.conf.template }}"

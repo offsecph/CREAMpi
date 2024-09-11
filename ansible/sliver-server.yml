@@ -1,0 +1,18 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Installing sliver-server
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'sliver_server'
+
+  roles:
+  - { role: 'tools/network/sliver', tags: 'sliver_server'}
+  vars:
+    net_module_path: "{{ creampi.tools.network.path.module }}"
+    sliver_server_release: "{{ creampi.tools.network.releases.sliverServer }}"

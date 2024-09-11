@@ -1,0 +1,10 @@
+---
+# tasks file for metasploit
+- name: Download metasploit-framework on {{ hostname }}
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: latest
+    force_apt_get: true
+  with_items:
+    - metasploit-framework
+  register: apt_result

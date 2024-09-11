@@ -16,6 +16,7 @@
       - python3-pip
       - python3-full
       - build-essential
+      - python2-minimal
       - python3-virtualenv
       - gcc-arm-linux-gnueabihf
     register: devel_result

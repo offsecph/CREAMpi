@@ -6,6 +6,15 @@
     state: latest
   register: knockd_install
 
+- name: Ensure scripts directory is present on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+    recurse: True
+    state: directory
+
 - name: Copying knockd script on {{ hostname }}
   ansible.builtin.copy:
     remote_src: false
