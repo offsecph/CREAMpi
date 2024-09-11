@@ -173,8 +173,7 @@ sudo ./raspberry-pi5.sh --arch arm64 --minimal
 ---
 
 ## Resources:
----
+
 https://www.linuxtechi.com/replace-strings-lines-with-ansible/
 https://ansible.readthedocs.io/projects/lint/rules/no-changed-when/
 https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_checkmode.html
----
