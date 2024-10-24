@@ -49,7 +49,11 @@ v1.1
 v1.2
            - Added httpsWrapper for SSH over TLS tunneling
            - Added sliver-server (full install) CREAMpi as teamserver
-           - Added examples for inventory on data/examples for VPN and SSH connections
+           - Added example templates for inventory on data/examples for VPN and SSH connections
+           - Added example templates for ansible main.yml to pick an installation:
+                * full-install.yml
+                * advanced-install.yml
+                * basic-install.yml
 ```
 
 --- 
