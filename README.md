@@ -156,9 +156,10 @@ ansible-playbook main.yml --extra-vars "ansible_user=kali ansible_password=kali 
 ### SSH over TLS traffic: Connecting to C2
 
 ```
-SSH tunneling over TLS is Enabled by default upon provisioning when ssh tunnel provider is selected. 
-A few requirements on the server side to automatically establish a SSH/TLS tunnel to the 
-remote server.
+SSH tunneling over TLS is enabled by default on `advanced` and `full` installations
+upon provisioning when ssh tunnel provider is selected. A few requirements on 
+the server side to automatically establish a SSH/TLS tunnel to the remote 
+server.
 
 Requirements:
 1. A domain name and domain dns configured
@@ -172,8 +173,8 @@ Sample configuration on Server side (VPS)
 ```nginx
 user www-data;
 worker_processes auto;
-#pid /run/nginx.pid;
-#include /etc/nginx/modules-enabled/*.conf;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
 
 # Mandatory "events" block
 events {
@@ -212,8 +213,9 @@ stream {
 ### VPN setup: Connecting to C2
 
 ```
-OpenVPN tunneling is Enabled by default upon provisioning when vpn tunnel provider is selected. 
-An OpenVPN server is required to perform such actions and request .ovpn file for the client.
+OpenVPN tunneling is Enabled by default on all types of installation upon 
+provisioning when vpn tunnel provider is selected. An OpenVPN server is 
+required to perform such actions and request .ovpn file for the client.
 
 Requirements:
 1. An openvpn server setup with .ovpn file
