@@ -152,7 +152,9 @@ ansible-playbook main.yml --extra-vars "ansible_user=kali ansible_password=kali 
 ### SSH over TLS traffic: Connecting to C2
 
 ```
-SSH tunneling over TLS is Enabled by default upon provisioning when ssh tunnel provider is selected. A few requirements on the server side to automatically establish a SSH/TLS tunnel to the remote server.
+SSH tunneling over TLS is Enabled by default upon provisioning when ssh tunnel provider is selected. 
+A few requirements on the server side to automatically establish a SSH/TLS tunnel to the 
+remote server.
 
 Requirements:
 1. A domain name and domain dns configured
@@ -205,7 +207,8 @@ stream {
 ### VPN setup: Connecting to C2
 
 ```
-OpenVPN tunneling is Enabled by default upon provisioning when vpn tunnel provider is selected. An OpenVPN server is required to perform such actions and request .ovpn file for the client.
+OpenVPN tunneling is Enabled by default upon provisioning when vpn tunnel provider is selected. 
+An OpenVPN server is required to perform such actions and request .ovpn file for the client.
 
 Requirements:
 1. An openvpn server setup with .ovpn file
@@ -243,23 +246,30 @@ Just rerun the ansible playbook again.
 
 *[PERFORMANCE] Slow installation time for sliver c2 / raspberry pi slows down*
 ```
-go is building from source for arm64 in the background any may affect the performance of the CPU. This may introduce errors in installing every other privisioning assets on the CREAMpi. You may disable `import_playbook` of `sliver-server.yml` if you want to install manually.
+go is building from source for arm64 in the background any may affect the performance of the CPU. 
+This may introduce errors in installing every other privisioning assets on the CREAMpi. 
+You may disable `import_playbook` of `sliver-server.yml` if you want to install manually.
 ```
 
 *[STALLS] Too long installation time for netxec (pipx netexec)*
 ```
 pipx compiles all the source code from repo to build netexec.
-this may cause long install time, introduce errors of such. You may install this manually if you like, but this should complete if no errors in the network or in installing the os. If it hangs, just refer to the above known issues section.
+this may cause long install time, introduce errors of such. You may install this manually if you like, 
+but this should complete if no errors in the network or in installing the os. 
+If it hangs, just refer to the above known issues section.
 ```
 
 *[STALLS] Too long installation time for metasploit (msf framework)*
 ```
-Same with go, it has tons of packages being installed as c2 framework so you may manually install or not install it if you would like. Refer to the above known issues section.
+Same with go, it has tons of packages being installed as c2 framework so you may manually install or 
+not install it if you would like. Refer to the above known issues section.
 ```
 
 *[ERRORS] ansible errors upon gathering facts*
 ```
-The message: `FAILED! => {"msg": "Timeout (12s) waiting for privilege escalation prompt: "}` is when you terminate the session of running instance of ansible playbook. wait for at least 1 minute before re-executing again.
+The message: `FAILED! => {"msg": "Timeout (12s) waiting for privilege escalation prompt: "}` 
+is when you terminate the session of running instance of ansible playbook. 
+Wait for at least 1 minute before re-executing again.
 ```
 
 *[ERRORS] I rerun the script, netexec still fails to install*
@@ -268,7 +278,9 @@ install it manually on the CREAMpi by running:
 
 `pipx install git+https://github.com/Pennyw0rth/NetExec`
 
-if it the error still persist; like `[fatal error: Python.h: No such file or directory]` the cause is might be a unexpected termination of ansible process which broke down python environment. Reimage pi, and rerun ansible playbook.
+if it the error still persist; like `[fatal error: Python.h: No such file or directory]` 
+the cause is might be a unexpected termination of ansible process which broke down the 
+python environment. Reimage pi, and rerun ansible playbook.
 ```
 
 *[DEBUGGING] For debugging any errors per playbook:*
@@ -285,7 +297,8 @@ if it the error still persist; like `[fatal error: Python.h: No such file or dir
 ***Running on raspbery pi os or previous kali raspberry pi or CREAMpi image***
 
 ```
-To make the image headless, meaning it will not chomp down all of the raspberry pi resources (since it has gui), follow the procedures below:
+To make the image headless, meaning it will not chomp down all of the raspberry pi resources 
+(since it has gui), follow the procedures below:
 ```
 
 1. Download kali raspberry pi build scripts from gitlab
