@@ -24,8 +24,6 @@
     recurse: True
     state: directory
 
-# Checking if the VPN tunneling services are present
-# on the system and store data in a variable
 - name: Check if ssh tunnel persistence timer is installed on {{ hostname }}
   ansible.builtin.stat: 
     path: "{{ remote_service_path }}/{{ sshtun_timer }}"
@@ -41,8 +39,6 @@
     path: "{{ remote_service_path }}/{{ sshtun_cleanup_service }}"
   register: sshtun_cleanup_service_status
 
-# Turn off the services to check whether it needs to be 
-# enabled depending on the tunneling service provider
 - name: Ensure that ssh tunnel persistence timer is turned off if installed on {{ hostname }}
   ansible.builtin.service:
     name: "{{ sshtun_timer }}"
@@ -64,8 +60,6 @@
   register: sshtun_cleanup_service_stopped
   when: 'sshtun_cleanup_service_status.stat.exists'
 
-# Copy the VPN tunneling scripts to pi host
-# regardless of tunnel service
 - name: Copy default ssh tunnel script file on {{ hostname }}
   ansible.builtin.copy:
     remote_src: False
@@ -127,20 +121,13 @@
   ansible.builtin.copy:
     remote_src: False
     src: "{{ local_key_path }}/{{ key_file }}"
-    dest: "{{ remote_key_path }}/{{ key_file }}"
+    dest: "{{ final_remote_key_path }}/{{ key_file }}"
     owner: root
     group: root
     mode: '0400'
     force: True
 
-- name: Changing ssh tunnel user configuration on {{ hostname }}
-  ansible.builtin.replace:
-    path: "{{ remote_script_path }}/{{ sshtun_script }}"
-    regexp: "{{ current_remote_user }}"
-    replace: '{{ remote_user }}'
-  register: sshtun_user_output
-  notify: 
-    - Restart script file changes
+# ---------------------- SSH TUNNELING CONFIGURATION ---------------------------
 
 - name: Changing ssh tunnel server configuration on {{ hostname }}
   ansible.builtin.replace:
@@ -155,8 +142,17 @@
   ansible.builtin.replace:
     path: "{{ remote_script_path }}/{{ sshtun_script }}"
     regexp: "{{ remote_key_path }}/{{ current_keyfile_config }}"
-    replace: "{{ remote_key_path }}/{{ key_file }}"
+    replace: "{{ final_remote_key_path }}/{{ key_file }}"
   register: sshtun_keyfile_output
+  notify: 
+    - Restart script file changes
+
+- name: Changing ssh tunnel user configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_script_path }}/{{ sshtun_script }}"
+    regexp: "{{ current_remote_user }}"
+    replace: '{{ remote_user }}'
+  register: sshtun_user_output
   notify: 
     - Restart script file changes
 
@@ -178,6 +174,8 @@
   notify:
     - Restart script file changes
 
+# ---------------------- RELOADING CHANGES ---------------------------------
+
 # Configure the daemon, the service file templates
 # After it detected some changes on the pi
 - name: Ensure to reload systemd daemon configuration changes on {{ hostname }}
@@ -185,11 +183,20 @@
     cmd: 'systemctl daemon-reload'
   when: sshtun_service_config.changed
 
+# ---------------------- STARTING SERVICES ---------------------------------
+
 # Start services if it is selected as primary
 # tunneling provider
 - name: Starting sshtunnel service on {{ hostname }}
   ansible.builtin.service:
     name: "{{ sshtun_service }}"
+    state: restarted
+    enabled: True
+  when: tunnel_service == "ssh"
+
+- name: Starting sshtunnel cleanup service on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ sshtun_cleanup_service }}"
     state: restarted
     enabled: True
   when: tunnel_service == "ssh"
@@ -201,6 +208,8 @@
     enabled: True
   register: sshtun_service_restarted
   when: tunnel_service == "ssh"
+
+# ---------------------- DEBUGGING  SSH TUNNEL -----------------------------
 
 # Check and validate connectivity of the pi host
 # to verbosely output on the CLI

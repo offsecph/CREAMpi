@@ -1,6 +1,6 @@
 ---
 # tasks file for display
-- name: Create a display directory builtin-scripts to {{ hostname }}
+- name: Create a display directory builtin-scripts on {{ hostname }}
   ansible.builtin.file:
     path: "{{ remote_display_path }}"
     owner: root
@@ -9,6 +9,16 @@
     recurse: True
     state: directory
 
+- name: Ensure that git is installed for display scripts on  {{ hostname }}
+  ansible.builtin.apt:
+    name: "{{ item }} "
+    state: latest
+    force_apt_get: true
+  with_items:
+    - git
+  register: display_git_result
+
+
 - name: Download display scripts from github to {{ hostname }}
   ansible.builtin.git:
     repo: "{{ display_git_repo }}"
@@ -16,10 +26,8 @@
     single_branch: true
     version: master
     force: true
-  ignore_errors: true
-  no_log: true
 
-- name: Validate display scripts
+- name: Validate display scripts on {{ hostname }}
   ansible.builtin.command:
     cmd: ls "{{ remote_display_path }}"
   register: display_result

@@ -7,24 +7,32 @@
 ;;  `user_password` is used to provision new kali password for CREAMpi
 ;;  `hostname` is used to provision host names on target raspberry pi systems
 ;;  `remote_user` is the remote user that will use the ssh key to connect to remote c2 server
-;;  `remote_server` the remote c2 server which CREAMpi will connect
+;;  `remote_server` is the remote c2 server which CREAMpi will connect (for SSH over TLS domain name must be specified) 
 ;;  `tunnel_port` is used in changing ssh tunnel configuration port
 ;;  `monitor_port` is used for monitoring ssh tunnel data (0 to disable monitoring and port usage)
-;;  `tunnel_service` is used to declare what default tunneling service will be enabled (values:ssh, vpn)
+;;  `httpswrapper_port` is used to open a local socket for HTTPS tunnel that will be used for SSH tunneling
+;;  `httpstun_port` is used in changing the ssh tunnel configuration in httpstun (SSH over HTTPS)
+;;  `tunnel_service` is used to declare what default tunneling provider will be enabled (values:ssh, vpn)
 ;;  `key_file` is the ssh key file from the files directory for uploading and used as ssh key.
 ;;  `ovpn_file` is the ovpn file from the files directory for uploading and used as vpn key.
-;;  `mount_phrase` will be used to configure ecryptfs passphrase for folder encryption
+;;  `mount_phrase` will be used to configure ecryptfs passphrase for folder encryption (DEPRECATED)
+
 [creampi]
-192.168.30.254    hostname='CREAMpi-zero' tunnel_port='20000' monitor_port='0' mount_phrase='ecryptPassword' ovpn_file=''
-;192.168.30.185    hostname='CREAMpi4-one' tunnel_port='20001' monitor_port='0' mount_phrase='' ovpn_file=''
+192.168.1.249	 hostname='CREAMpi4b' tunnel_port='2222' monitor_port='0'  ovpn_file='dropbox.ovpn'
+;192.168.1.250    hostname='CREAMpi5' tunnel_port='2226' monitor_port='0' ovpn_file='dropbox.ovpn'
+;
+;; mount_phrase is deprecated due to ecryptfs not supported anymore in debian systems
+;;192.168.1.251    hostname='' tunnel_port='' monitor_port='0' mount_phrase='AnyStrongpassword' ovpn_file=''
 
 ;; [hosts:vars] will use the same configuration for all raspberry pi for provisioning.
 ;; to set a different values per server, remove vars below and align them above along
 ;; with the hostname or IP address of the server
+;; if using vpn, upload an ssh key still for a backup connection although it will not
+;; be used as a tunneling provider
 [creampi:vars]
-root_password='yourrootpassword'
-user_password='youruserpassword'
-remote_user='root'
-remote_server='publicIP_or_domainName'
-tunnel_service='ssh'
+root_password='yourdesiredrootpassword'
+user_password='yourdesireduserpassword'
+remote_user='tunnel'
+remote_server='yourdomain.com'
+tunnel_service='vpn'
 key_file='id_rsa'

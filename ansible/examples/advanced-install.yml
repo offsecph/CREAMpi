@@ -1,13 +1,12 @@
+##
+# 
+# Advanced installation playbook:
+#   - Advanced protocol tunneling (SSH over TLS enabled)
+#   - Few tools to conserve resources
+#   - Moderate installation time
+##
+
 ---
-
-##
-#
-# Full installation playbook:
-#   - Installs everything
-#   - Longer installation time
-#
-##
-
 # Load datas
 - import_playbook: data.yml
   vars:
@@ -49,17 +48,16 @@
 # without the need of proxy
 #
 # network tools
-- import_playbook: sliver-server.yml
-- import_playbook: bloodhound-repo.yml
-- import_playbook: bloodhound-git.yml
+# - import_playbook: sliver-server.yml
+# - import_playbook: bloodhound-repo.yml
+# - import_playbook: bloodhound-git.yml
 - import_playbook: bloodhound-ce.yml
 - import_playbook: igandx-responder.yml
 - import_playbook: legacy-responder.yml
-- import_playbook: metasploit.yml
+# - import_playbook: metasploit.yml
 - import_playbook: impacket.yml
 - import_playbook: netexec.yml
-- import_playbook: rusthound.yml
-
+# - import_playbook: rusthound.yml
 # physical tools
 - import_playbook: nacbypass.yml
 - import_playbook: silentbridge.yml

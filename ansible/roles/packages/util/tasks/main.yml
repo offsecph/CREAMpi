@@ -6,6 +6,7 @@
       state: latest
       force_apt_get: true
     with_items:
+      - xxd
       - zip
       - duf
       - htop 

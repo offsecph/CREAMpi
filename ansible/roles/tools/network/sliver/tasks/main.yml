@@ -1,17 +1,35 @@
 ---
 # tasks file for sliver
-- name: Ensure directory for sliver is on {{ hostname }}
-  ansible.builtin.file:
-    path: "{{ net_module_path }}/sliver"
-    owner: root
-    group: root
-    mode: '0755'
-    state: directory
-
 - name: Download sliver c2 server on {{ hostname }}
+  ansible.builtin.git:
+    repo: "{{ sliver_git_repo }}"
+    dest: "{{ net_module_path }}/sliver"
+    single_branch: true
+    version: master
+    force: true
+
+- name: Build sliver c2 server on {{ hostname }}
   ansible.builtin.shell:
     cmd: |
-      curl -s {{ sliver_server_release }} \
-      | grep "browser_download_url.*sliver-server_linux" \
-      | head -n2 | cut -d: -f2,3 | tr -d "\"" | wget -qi - -P "{{ net_module_path }}/sliver"
-    creates: "{{ net_module_path }}/sliver/sliver-server_linux"
+      cd {{ net_module_path }}/sliver && \
+      export GOOS=linux; \
+      export GOARCH=arm64; \
+      nohup make > /dev/null 2>&1 &
+    creates: "{{ net_module_path }}/sliver/sliver-server"
+
+# - name: Set path for sliver c2 on {{ hostname }}
+#   ansible.builtin.shell:
+#     cmd: |
+#       ln -s {{ net_module_path }}/sliver/sliver-server {{ sliver_exec_path }}/sliver-server && 2>/dev/null \
+#       ln -s {{ net_module_path }}/sliver/sliver-client {{ sliver_exec_path }}/sliver-client 2>/dev/null
+#     creates: "{{ sliver_exec_path }}/sliver/sliver-server"
+
+- name: Create netexec symlinks in executable path on {{ hostname }}
+  ansible.builtin.file:
+    src: "{{ net_module_path }}/sliver/{{ item.src }}"
+    dest: "{{ sliver_exec_path }}/{{ item.dest }}"
+    state: link
+    force: True
+  loop:
+    - { src: sliver-server, dest: sliver-server }
+    - { src: sliver-client, dest: sliver-client }

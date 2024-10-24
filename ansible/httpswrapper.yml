@@ -1,0 +1,40 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring httpswrapper daemon
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'httpswrapper_service'
+  
+  roles:
+  - { role: 'services/httpswrapper', tags: 'httpswrapper_service'}
+  vars:
+    remote_installer_path: "{{ creampi.services.httpsWrapper.installer.remotePath }}"
+    local_installer_path: "{{ creampi.services.httpsWrapper.installer.localPath }}"
+    hwrap_installer: "{{ creampi.services.httpsWrapper.installer.executable }}"
+    remote_script_path: "{{ creampi.services.httpsWrapper.script.remotePath }}"
+    local_script_path: "{{ creampi.services.httpsWrapper.script.localPath }}"
+    hwrap_script: "{{ creampi.services.httpsWrapper.script.tunneling }}"
+    hwrap_cleanup_script: "{{ creampi.services.httpsWrapper.script.cleanup }}"
+    remote_service_path: "{{ creampi.services.httpsWrapper.service.remotePath }}"
+    local_service_path: "{{ creampi.services.httpsWrapper.service.localPath }}"
+    hwrap_service: "{{ creampi.services.httpsWrapper.service.tunneling }}"
+    hwrap_timer: "{{ creampi.services.httpsWrapper.service.timer }}"
+    hwrap_cleanup_service: "{{ creampi.services.httpsWrapper.service.cleanup }}"
+    remote_conf_path: "{{ creampi.services.httpsWrapper.conf.remotePath }}"
+    local_conf_path: "{{ creampi.services.httpsWrapper.conf.localPath }}"
+    hwrap_conf: "{{ creampi.services.httpsWrapper.conf.template }}"
+    remote_key_path: "{{ creampi.services.httpsWrapper.key.remotePath }}"
+    local_key_path:  "{{ creampi.services.httpsWrapper.key.localPath }}"
+    final_remote_key_path: "{{ creampi.services.httpsWrapper.key.finalRemotePath }}"
+    current_keyfile_config: "{{ creampi.services.httpsWrapper.key.currentConfig }}"
+    current_remote_user: "{{ creampi.services.httpsWrapper.defaults.remoteUser }}"
+    current_remote_server: "{{ creampi.services.httpsWrapper.defaults.remoteServer }}"
+    default_httpswrap_port: "{{ creampi.services.httpsWrapper.defaults.httpsTunPort }}"
+    default_hwrap_port: "{{ creampi.services.httpsWrapper.defaults.httpswrapperPort }}"
+    default_tun_port: "{{ creampi.services.httpsWrapper.defaults.tunnelPort }}"
+    default_mon_port: "{{ creampi.services.httpsWrapper.defaults.monitorPort }}"
+        

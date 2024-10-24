@@ -1,0 +1,15 @@
+[Unit]
+Description=HTTPS Wrapper service (TLS tunnel for SSH daemon)
+After=network.target
+
+[Service]
+Type=forking
+User=root
+ExecStart=/opt/scripts/startup/httpswrapper.sh start
+ExecReload=/opt/scripts/startup/httpswrapper.sh restart
+ExecStop=/opt/scripts/startup/httpswrapper.sh stop
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

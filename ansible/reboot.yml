@@ -13,6 +13,19 @@
   tags: 'reboot_result'
 
   tasks:
+  - name: Check if 'make' process is still running
+    ansible.builtin.shell: |
+      ps aux | grep "[m]ake"
+    register: make_process
+    retries: 10       
+    delay: 20        
+    until: make_process.stdout == ""
+    failed_when: false
+
+  - name: Continue with reboot after 'make' finishes
+    ansible.builtin.shell:
+      cmd: echo "Proceeding with the next task."
+      
   - name: Rebooting {{ hostname }} for provisioning changes
     ansible.builtin.shell:
       cmd: echo "Ansible {{ hostname }} provisioning changes. Rebooting after 10s"

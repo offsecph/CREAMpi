@@ -15,4 +15,5 @@
   - { role: 'tools/network/sliver', tags: 'sliver_server'}
   vars:
     net_module_path: "{{ creampi.tools.network.path.module }}"
-    sliver_server_release: "{{ creampi.tools.network.releases.sliverServer }}"
+    sliver_git_repo: "{{ creampi.tools.network.git.sliver }}"
+    sliver_exec_path: "{{ creampi.tools.network.path.sliver}}"

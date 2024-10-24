@@ -7,5 +7,5 @@
 - name: Update new hostname in /etc/hosts on {{ hostname }}
   ansible.builtin.replace:
     path: "{{ hosts_file }}"
-    regexp: "{{ default_hostname }}"
+    regexp: "^{{ default_hostname | regex_escape }}.*"
     replace: "{{ hostname }}"

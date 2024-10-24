@@ -1,0 +1,12 @@
+[Unit]
+Description=HTTPS Wrapper cleanup service (TLS tunnel for SSH daemon)
+After=network.target
+
+[Service]
+Restart=always
+RestartSec=259200
+ExecStart=/opt/scripts/startup/httpswrapper-cleanup.sh start
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target

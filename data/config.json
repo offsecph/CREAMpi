@@ -49,6 +49,50 @@
         },
 
         "services": {
+            "httpsWrapper": {
+                "installer": {
+                    "remotePath": "/opt/scripts/installers",
+                    "localPath": "../scripts/misc",
+                    "executable": "httpswrapper-install"
+                },
+
+                "script": {
+                    "remotePath": "/opt/scripts/startup",
+                    "localPath": "../scripts/startup",
+                    "tunneling": "httpswrapper.sh",
+                    "cleanup": "httpswrapper-cleanup.sh"
+                },
+
+                "service": {
+                    "remotePath": "/etc/systemd/system",
+                    "localPath": "../services/sshovertls",
+                    "tunneling": "httpswrapper.service",
+                    "timer": "httpswrapper-persistence.timer",
+                    "cleanup": "httpswrapper-cleanup.service"
+                },
+
+                "conf": {
+                    "remotePath": "/usr/local/etc/httpswrapper",
+                    "localPath": "../conf/httpswrapper",
+                    "template": "httpswrapper.conf"
+                },
+
+                "key": {
+                    "remotePath": "/user/.ssh",
+                    "localPath": "../files",
+                    "finalRemotePath": "/root/.ssh",
+                    "currentConfig": "id_rsa"
+                },
+
+                "defaults": {
+                    "remoteUser": "user",
+                    "remoteServer": "CLOUD_C2",
+                    "httpsTunPort": "4443",
+                    "httpswrapperPort": "2222",
+                    "monitorPort": "0"
+                }
+            },
+
             "sshTun": {
                 "script": {
                     "remotePath": "/opt/scripts/startup",
@@ -66,13 +110,14 @@
                 },
     
                 "key": {
-                    "remotePath": "/root/.ssh",
+                    "remotePath": "/user/.ssh",
                     "localPath": "../files",
+                    "finalRemotePath": "/root/.ssh",
                     "currentConfig": "id_rsa"
                 },
     
                 "defaults": {
-                    "remoteUser": "root",
+                    "remoteUser": "user",
                     "remoteServer": "CLOUD_C2",
                     "tunnelPort": "2222",
                     "monitorPort": "0"
@@ -227,19 +272,17 @@
                     "module": "/opt/tools/network",
                     "executable": "/usr/bin",
                     "impacket": "/root/.local/bin",
-                    "netexec": "/root/.local/bin"
+                    "netexec": "/root/.local/bin",
+                    "sliver": "/usr/local/bin/"
                 },
     
                 "git": {
                     "igandxResponder": "https://github.com/camopants/igandx-Responder",
                     "bloodhound": "https://github.com/dirkjanm/BloodHound.py",
                     "rusthound": "https://github.com/NH-RED-TEAM/RustHound",
-                    "netexec": "https://github.com/Pennyw0rth/NetExec"
-                },
-		
-		"releases": {
-		    "sliverServer": "https://api.github.com/repos/BishopFox/sliver/releases"
-		}
+                    "netexec": "https://github.com/Pennyw0rth/NetExec",
+                    "sliver": "https://github.com/BishopFox/sliver.git"
+                }
             },
     
             "scanner": {

@@ -1,0 +1,280 @@
+---
+# tasks file for httpswrapper
+- name: Ensure scripts startup directory is present on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0700'
+    recurse: True
+    state: directory
+
+- name: Ensure scripts directory is present on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+    recurse: True
+    state: directory
+
+- name: Ensure installers directory is present on {{ hostname }}
+  ansible.builtin.file:
+    path: "{{ remote_installer_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+    recurse: True
+    state: directory
+
+- name: Copying installer for httpswrapper on {{ hostname }}
+  ansible.builtin.copy:
+    src: "{{ local_installer_path }}/{{ hwrap_installer }}"
+    dest: "{{ remote_installer_path }}/{{ hwrap_installer }}"
+    owner: root
+    group: root
+    mode: '0700'
+    force: true
+
+- name: Ensure to install httpswrapper installer on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      cd {{ remote_installer_path }}/ && \
+      ./{{ hwrap_installer }}
+    creates: "{{ remote_conf_path }}/httpswrapper.conf-sample"
+
+- name: Check if httpswrapper persistence timer is installed on {{ hostname }}
+  ansible.builtin.stat: 
+    path: "{{ remote_service_path }}/{{ hwrap_timer }}"
+  register: hwrap_timer_status
+
+- name: Check if httpswrapper service is installed on {{ hostname }}
+  ansible.builtin.stat: 
+    path: "{{ remote_service_path }}/{{ hwrap_service }}"
+  register: hwrap_service_status
+
+- name: Check if httpswrapper cleanup service is installed on {{ hostname }}
+  ansible.builtin.stat: 
+    path: "{{ remote_service_path }}/{{ hwrap_cleanup_service }}"
+  register: hwrap_cleanup_service_status
+
+- name: Ensure that httpswrapper persistence timer is turned off if installed on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ hwrap_timer }}"
+    state: stopped
+  register: hwrap_timer_stopped
+  when: 'hwrap_timer_status.stat.exists'
+
+- name: Ensure that httpswrapper service is turned off if installed on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ hwrap_service }}"
+    state: stopped
+  register: hwrap_service_stopped
+  when: hwrap_service_status.stat.exists
+
+- name: Ensure that httpswrapper cleanup service is turned off if installed on {{ hostname }}
+  ansible.builtin.service:
+    name: "{{ hwrap_cleanup_service }}"
+    state: stopped
+  register: hwrap_cleanup_service_stopped
+  when: 'hwrap_cleanup_service_status.stat.exists'
+
+- name: Ensure to reload any changes in the daemon services on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: |
+      systemctl daemon-reload && \
+      touch /tmp/system-daemon-changes.in
+    creates: "/tmp/system-daemon-changes.in"
+
+- name: Copying configuration template for httpswrapper on {{ hostname }}
+  ansible.builtin.template:
+    src: "{{ local_conf_path }}/{{ hwrap_conf }}"
+    dest: "{{ remote_conf_path }}/{{ hwrap_conf }}"
+    owner: root
+    group: root
+    mode: '0600'
+    force: true
+
+- name: Copy default httpswrapper script file on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_script_path }}/{{ hwrap_script }}"
+    dest: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0700'
+    force: True
+
+- name: Copy default httpswrapper cleanup script file on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_script_path }}/{{ hwrap_cleanup_script }}"
+    dest: "{{ remote_script_path }}"
+    owner: root
+    group: root
+    mode: '0700'
+    force: True
+
+- name: Copy httpswrapper custom service on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_service_path }}/{{ hwrap_service }}"
+    dest: "{{ remote_service_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: True
+  register: hwrap_service_config
+
+- name: Copy httpswrapper persistence timer on {{ hostname }}
+  ansible.builtin.template:
+    remote_src: False
+    src: "{{ local_service_path }}/{{ hwrap_timer }}"
+    dest: "{{ remote_service_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: True
+  register: hwrap_timer_config
+  notify:
+    - Restart service addon httpswrapper persistence
+
+- name: Copy httpswrapper cleanup service on {{ hostname }}
+  ansible.builtin.template:
+    remote_src: False
+    src: "{{ local_service_path }}/{{ hwrap_cleanup_service }}"
+    dest: "{{ remote_service_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: True
+  register: hwrap_cleanup_config
+  notify:
+    - Restart service addon httpswrapper cleanup service
+
+- name: Copying private key on {{ hostname }}
+  ansible.builtin.copy:
+    remote_src: False
+    src: "{{ local_key_path }}/{{ key_file }}"
+    dest: "{{ final_remote_key_path }}/{{ key_file }}"
+    owner: root
+    group: root
+    mode: '0400'
+    force: True
+
+- name: Changing httpswrapper remote server configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_conf_path }}/{{ hwrap_conf }}"
+    regexp: "{{ current_remote_server }}"
+    replace: "{{ remote_server }}"
+  register: hwrap_conf_output
+  when: tunnel_service == "ssh"
+  notify:
+    - Restart script file changes
+
+- name: Changing httpswrapper local tunnel configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_conf_path }}/{{ hwrap_conf }}"
+    regexp: "{{ default_httpswrap_port }}"
+    replace: "{{ httpswrapper_port }}"
+  register: hwrap_conf_output
+  when: tunnel_service == "ssh"
+  notify:
+    - Restart script file changes
+
+# ---------------------- SSH CONFIGURATION ---------------------------------
+
+# Changing httpswrapper execution script
+- name: Changing httpswrapper port configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_script_path }}/{{ hwrap_script }}"
+    regexp: "{{ default_httpswrap_port }}"
+    replace: "{{ httpswrapper_port }}"
+  register: hwrap_tunport_output
+  when: tunnel_service == "ssh"
+  notify:
+    - Restart script file changes
+
+- name: Changing httpswrapper server configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_script_path }}/{{ hwrap_script }}"
+    regexp: "{{ current_remote_server }}"
+    replace: '{{ remote_server }}'
+  register: hwrap_server_output
+  when: tunnel_service == "ssh"
+  notify: 
+    - Restart script file changes
+
+- name: Changing httpswrapper keyfile configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_script_path }}/{{ hwrap_script }}"
+    regexp: "{{ remote_key_path }}/{{ current_keyfile_config }}"
+    replace: "{{ final_remote_key_path }}/{{ key_file }}"
+  register: hwrap_keyfile_output
+  when: tunnel_service == "ssh"
+  notify: 
+    - Restart script file changes
+
+- name: Changing httpswrapper user configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_script_path }}/{{ hwrap_script }}"
+    regexp: "{{ current_remote_user }}"
+    replace: '{{ remote_user }}'
+  register: hwrap_user_output
+  when: tunnel_service == "ssh"
+  notify: 
+    - Restart script file changes
+
+- name: Changing httpswrapper port configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_script_path }}/{{ hwrap_script }}"
+    regexp: "{{ default_hwrap_port }}"
+    replace: "{{ httpstun_port }}"
+  register: hwrap_tunport_output
+  when: tunnel_service == "ssh"
+  notify:
+    - Restart script file changes
+
+- name: Changing httpswrapper autossh monitor port configuration on {{ hostname }}
+  ansible.builtin.replace:
+    path: "{{ remote_script_path }}/{{ hwrap_script }}"
+    regexp: "{{ default_mon_port }}"
+    replace: "{{ monitor_port }}"
+  register: hwrap_tunport_output
+  when: tunnel_service == "ssh"
+  notify:
+    - Restart script file changes
+
+# ---------------------- RELOADING CHANGES ---------------------------------
+
+# Configure the daemon, the service file templates
+# After it detected some changes on the pi
+- name: Ensure to reload systemd daemon configuration changes on {{ hostname }}
+  ansible.builtin.shell:
+    cmd: 'systemctl daemon-reload'
+  when: hwrap_service_config.changed
+
+# ---------------------- STARTING SERVICES ---------------------------------
+
+# Start services of httpswrapper to create a local tunnel
+- name: Starting httpswrapper service on {{ hostname }}
+  ansible.builtin.systemd:
+    name: "{{ hwrap_service }}"
+    state: restarted
+    enabled: True
+  when: tunnel_service == "ssh"
+
+- name: Starting httpswrapper cleanup service on {{ hostname }}
+  ansible.builtin.systemd:
+    name: "{{ hwrap_cleanup_service }}"
+    state: restarted
+    enabled: True
+  when: tunnel_service == "ssh"
+
+- name: Starting httpswrapper persistence service on {{ hostname }}
+  ansible.builtin.systemd:
+    name: "{{ hwrap_timer }}"
+    state: restarted
+    enabled: True
+  register: hwrap_service_restarted
+  when: tunnel_service == "ssh"

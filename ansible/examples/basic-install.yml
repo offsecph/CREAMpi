@@ -1,10 +1,12 @@
 ---
 
 ##
-#
-# Full installation playbook:
-#   - Installs everything
-#   - Longer installation time
+# 
+# Basic installation playbook:
+#   - No stateful firewall installed
+#   - Few network tools installed
+#   - Basic Tunneling protocols SSH / VPN
+#   - Fast Installation time
 #
 ##
 
@@ -35,12 +37,12 @@
 # Security configuration and other utilities
 # needed to function the pi server
 # - import_playbook: ecrypt.yml      ### deprecated from debian repository
-- import_playbook: iptables.yml
-- import_playbook: knockd.yml
+# - import_playbook: iptables.yml
+# - import_playbook: knockd.yml
 - import_playbook: resolved.yml
 - import_playbook: sshd.yml
 - import_playbook: timesyncd.yml
-- import_playbook: httpswrapper.yml
+# - import_playbook: httpswrapper.yml
 - import_playbook: sshtun.yml
 - import_playbook: vpntun.yml
 ## PT Tools ------
@@ -49,25 +51,24 @@
 # without the need of proxy
 #
 # network tools
-- import_playbook: sliver-server.yml
-- import_playbook: bloodhound-repo.yml
-- import_playbook: bloodhound-git.yml
-- import_playbook: bloodhound-ce.yml
+# - import_playbook: sliver-server.yml
+# - import_playbook: bloodhound-repo.yml
+# - import_playbook: bloodhound-git.yml
+# - import_playbook: bloodhound-ce.yml
 - import_playbook: igandx-responder.yml
 - import_playbook: legacy-responder.yml
-- import_playbook: metasploit.yml
-- import_playbook: impacket.yml
-- import_playbook: netexec.yml
-- import_playbook: rusthound.yml
-
+# - import_playbook: metasploit.yml
+# - import_playbook: impacket.yml
+# - import_playbook: netexec.yml
+# - import_playbook: rusthound.yml
 # physical tools
-- import_playbook: nacbypass.yml
-- import_playbook: silentbridge.yml
+#- import_playbook: nacbypass.yml
+#- import_playbook: silentbridge.yml
 # scanner tools
 - import_playbook: aquatone.yml
-- import_playbook: gowitness.yml
+#- import_playbook: gowitness.yml
 - import_playbook: httpx.yml
-- import_playbook: katana.yml
+#- import_playbook: katana.yml
 - import_playbook: nuclei.yml
 - import_playbook: nuclei-templates.yml
 

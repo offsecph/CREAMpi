@@ -1,0 +1,20 @@
+---
+# handlers file for httpswrapper
+
+- name: Restart script file changes
+  ansible.builtin.systemd:
+    name: "{{ hwrap_service }}"
+    state: restarted
+  when: tunnel_service == "ssh"
+
+- name: Restart service addon httpswrapper persistence
+  ansible.builtin.systemd:
+    name: "{{ hwrap_timer }}"
+    state: restarted
+  when: tunnel_service == "ssh"
+
+- name: Restart service addon httpswrapper cleanup service
+  ansible.builtin.systemd:
+    name: "{{ hwrap_cleanup_service }}"
+    state: restarted
+  when: tunnel_service == "ssh"
