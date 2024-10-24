@@ -209,6 +209,7 @@ stream {
     }
 }
 ```
+
 ---
 ### VPN setup: Connecting to C2
 
@@ -231,6 +232,15 @@ Legend:
 - *[ERRORS] - introducing some errors upon script execution.*
 - *[PERFORMANCE] - it affects the performance of the pi when executed.*
 
+Monitoring Execution:
+```b
+To monitor execution on the pi if ansible process hangs on the controller, you can ssh
+in to the pi and execute these commands:
+```
+```bash
+while true; do ps aux | grep python3 && sleep 1 && clear; done
+```
+
 Known Issues:
 
 - *ansible [STALLS] when trying to update and upgrade apt repository*
@@ -239,7 +249,7 @@ Known Issues:
 - *ansible [STALLS] when trying to install metasploit*
 - *ansible [ERRORS] on installing netexec (pipx netexec)*
 ```
-Just rerun the ansible playbook. It will now install faster than earlier.
+Just re-run the ansible playbook.
 ```
 
 *[STALLS] Ansible stalls in a certain point of the installation*
@@ -248,13 +258,13 @@ Ansible runs on python, so it uses paramiko and other ssh modules to execute and
 the target. It might be that the python process has been exited uncleanly or a network issue
 had happened.
 
-Just rerun the ansible playbook again.
+Ansible is idempotent. Just re-run the ansible playbook again.
 ```
 
 *[PERFORMANCE] Slow installation time for sliver c2 / raspberry pi slows down*
 ```
 go is building from source for arm64 in the background any may affect the performance of the CPU. 
-This may introduce errors in installing every other privisioning assets on the CREAMpi. 
+This may introduce errors in installing every other provisioning assets on the CREAMpi. 
 You may disable `import_playbook` of `sliver-server.yml` if you want to install manually.
 ```
 
@@ -353,7 +363,10 @@ sudo ./raspberry-pi5.sh --arch arm64 --minimal
 
 ## Resources:
 
-https://www.kali.org/docs/development/arm-build-scripts/
-https://ansible.readthedocs.io/projects/lint/rules/no-changed-when/
-https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_checkmode.html
-https://nginx.org/en/docs/stream/ngx_stream_ssl_preread_module.html
+- https://www.kali.org/docs/development/arm-build-scripts/
+- https://ansible.readthedocs.io/projects/lint/rules/no-changed-when/
+- https://docs.ansible.com/ansible/latest/collections/ansible/builtin/index.html
+- https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_checkmode.html
+- https://www.redhat.com/en/blog/ansible-galaxy-intro
+- https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html
+- https://nginx.org/en/docs/stream/ngx_stream_ssl_preread_module.html
