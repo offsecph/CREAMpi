@@ -28,7 +28,6 @@
 - import_playbook: util.yml
 # devel tools
 - import_playbook: go.yml
-
 - import_playbook: pip2.yml
 ## Service installation ------
 # Security configuration and other utilities
