@@ -159,7 +159,8 @@ remote server.
 Requirements:
 1. A domain name and domain dns configured
 2. Server side (c2) must be configured to handle nginx https reverse proxy to ssh
-3. Private key of the remote server to be able to connect (must be uploaded to files/ before provisioning)
+3. Private key of the remote server to be able to connect (must be uploaded 
+to files/ directory before provisioning)
 ```
 
 Sample configuration on Server side (VPS)
@@ -212,7 +213,7 @@ An OpenVPN server is required to perform such actions and request .ovpn file for
 
 Requirements:
 1. An openvpn server setup with .ovpn file
-2. .ovpn file must be uploaded to /file directory before provisioning
+2. .ovpn file must be uploaded to /files directory before provisioning
 ```
 
 *[Openvpn server installation guide](https://www.digitalocean.com/community/tutorials/how-to-set-up-and-configure-an-openvpn-server-on-ubuntu-20-04)*
@@ -254,15 +255,15 @@ You may disable `import_playbook` of `sliver-server.yml` if you want to install 
 *[STALLS] Too long installation time for netxec (pipx netexec)*
 ```
 pipx compiles all the source code from repo to build netexec.
-this may cause long install time, introduce errors of such. You may install this manually if you like, 
-but this should complete if no errors in the network or in installing the os. 
-If it hangs, just refer to the above known issues section.
+this may cause long install time, introduce errors of such. You may install this manually 
+if you like, but this should complete if no errors in the network or in 
+installing the os. If it stalls or hangs, just refer to the above known issues section.
 ```
 
 *[STALLS] Too long installation time for metasploit (msf framework)*
 ```
-Same with go, it has tons of packages being installed as c2 framework so you may manually install or 
-not install it if you would like. Refer to the above known issues section.
+Same with go, it has tons of packages being installed as c2 framework so you may manually 
+install or not install it if you would like. Refer to the above known issues section.
 ```
 
 *[ERRORS] ansible errors upon gathering facts*
