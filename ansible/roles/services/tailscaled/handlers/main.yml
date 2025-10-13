@@ -1,0 +1,6 @@
+---
+# handlers file for tailscaled
+- name: Restart tailscaled service
+  ansible.builtin.service:
+    name: tailscaled
+    state: restarted

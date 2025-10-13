@@ -28,6 +28,14 @@ Supported Hardware Versions:
 ```
 
 ---
+### NEW UPDATE:
+
+```
+v.1.3
+10/13/2025 - Added tailscaled for managed tailscale VPN service connection
+```
+
+---
 ### UPDATE:
 
 ```
@@ -108,6 +116,7 @@ cp dropbox.ovpn CREAMPi/files/dropbox.ovpn
 ;;  `tunnel_service` is used to declare what default tunneling service will be enabled (values:ssh, vpn)
 ;;  `key_file` is the ssh key file from the files directory for uploading and used as ssh key.
 ;;  `ovpn_file` is the ovpn file from the files directory for uploading and used as vpn key.
+;;  `tailscale_authkey` is the auth access token to join the CREAMpi on managed tailscale VPN service
 ;;  `mount_phrase` will be used to configure ecryptfs passphrase for folder encryption (DEPRECATED)
 
 [creampi]
@@ -129,6 +138,7 @@ remote_user=''
 remote_server=''
 tunnel_service=''
 key_file=''
+tailscale_authkey=''
 ```
 
 4. Customize installation and copy example files from ansible/examples directory to ansible root directory and rename it as `main.yml`
@@ -151,6 +161,19 @@ ansible-playbook main.yml --extra-vars "ansible_user=kali ansible_password=kali 
 ```
 
 7. Have a coffee break! ☕
+
+---
+### NEW: TAILSCALE VPN Service
+```
+Tailscale is a zero-config peer-to-peer VPN built on top of wireguard and is enabled by default
+on `advanced` and `full` installations. It creates a virtual private
+network between devices allowing to communicate securely without poking holes within firewalls, NAT
+or different networks. 
+
+Requirements:
+1. A Tailscale web account for managing devices
+2. Tailscale Auth Key
+```
 
 ---
 ### SSH over TLS traffic: Connecting to C2
@@ -370,3 +393,4 @@ sudo ./raspberry-pi5.sh --arch arm64 --minimal
 - https://www.redhat.com/en/blog/ansible-galaxy-intro
 - https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html
 - https://nginx.org/en/docs/stream/ngx_stream_ssl_preread_module.html
+- https://tailscale.com/kb/1031/install-linux

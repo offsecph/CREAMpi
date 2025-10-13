@@ -1,0 +1,33 @@
+---
+# tasks file for tailscaled
+- name: Download Tailscale APT GPG key to keyring on {{ hostname }}
+  ansible.builtin.get_url:
+    url: "{{ package_signing_conf_url }}"
+    dest: "{{ keyring_conf_path }}"
+    mode: '0644'
+
+- name: Add Tailscale APT repository on {{ hostname }}
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by={{ keyring_conf_path }}] {{ apt_conf_repo }} bookworm main"
+    filename: tailscale
+    state: present
+
+- name: Update apt cache for the upcoming tasks on {{ hostname }}
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install Tailscale on {{ hostname }}
+  ansible.builtin.apt:
+    name: tailscale
+    state: present
+
+- name: Starting tailscaled service on {{ hostname }}
+  ansible.builtin.service:
+    name: tailscaled
+    state: started
+    enabled: true
+
+- name: Connect Tailscale using auth key on {{ hostname }}
+  ansible.builtin.shell: >
+    tailscale up --reset --authkey={{ tailscale_authkey }}

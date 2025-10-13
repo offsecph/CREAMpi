@@ -1,8 +1,8 @@
 ---
 
 ##
-# 
-# Full installation playbook: 
+#
+# Full installation playbook:
 #   - Installs everything
 #   - Longer installation time
 #
@@ -41,6 +41,7 @@
 - import_playbook: sshd.yml
 - import_playbook: timesyncd.yml
 - import_playbook: httpswrapper.yml
+- import_playbook: tailscaled.yml
 - import_playbook: sshtun.yml
 - import_playbook: vpntun.yml
 ## PT Tools ------
@@ -59,6 +60,7 @@
 - import_playbook: impacket.yml
 - import_playbook: netexec.yml
 - import_playbook: rusthound.yml
+
 # physical tools
 - import_playbook: nacbypass.yml
 - import_playbook: silentbridge.yml

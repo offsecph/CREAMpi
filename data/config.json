@@ -93,6 +93,14 @@
                 }
             },
 
+            "tailscaled": {
+                "conf": {
+                    "packageSigningUrl": "https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg",
+                    "keyring": "/usr/share/keyrings/tailscale-archive-keyring.gpg",
+                    "aptRepo": "https://pkgs.tailscale.com/stable/debian" 
+                }
+            },
+
             "sshTun": {
                 "script": {
                     "remotePath": "/opt/scripts/startup",

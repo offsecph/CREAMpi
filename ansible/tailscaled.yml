@@ -1,0 +1,17 @@
+- import_playbook: data.yml
+  vars:
+    data_path: "../data/"
+  tags: 'data'
+
+- name: Configuring tailscaled service
+  hosts: creampi
+  gather_facts: False
+  become: True
+  tags: 'tailscaled_service'
+  
+  roles:
+  - { role: 'services/tailscaled', tags: 'tailscaled_service' }
+  vars:
+    package_signing_conf_url: "{{ creampi.services.tailscaled.conf.packageSigningUrl }}"
+    keyring_conf_path: "{{ creampi.services.tailscaled.conf.keyring }}"
+    apt_conf_repo: "{{ creampi.services.tailscaled.conf.aptRepo }}"

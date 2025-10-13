@@ -15,6 +15,7 @@
 ;;  `tunnel_service` is used to declare what default tunneling provider will be enabled (values:ssh, vpn)
 ;;  `key_file` is the ssh key file from the files directory for uploading and used as ssh key.
 ;;  `ovpn_file` is the ovpn file from the files directory for uploading and used as vpn key.
+;;  `tailscale_authkey` is the auth access token to join the CREAMpi on managed tailscale VPN service
 ;;  `mount_phrase` will be used to configure ecryptfs passphrase for folder encryption (DEPRECATED)
 
 [creampi]
@@ -36,3 +37,4 @@ remote_user='tunnel'
 remote_server='yourdomain.com'
 tunnel_service='vpn'
 key_file='id_rsa'
+tailscale_authkey='tskey-auth-...'

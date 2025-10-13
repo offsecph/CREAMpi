@@ -38,6 +38,7 @@
 - import_playbook: sshd.yml
 - import_playbook: timesyncd.yml
 - import_playbook: httpswrapper.yml
+- import_playbook: tailscaled.yml
 - import_playbook: sshtun.yml
 - import_playbook: vpntun.yml
 ## PT Tools ------

@@ -15,10 +15,11 @@
 ;;  `tunnel_service` is used to declare what default tunneling provider will be enabled (values:ssh, vpn)
 ;;  `key_file` is the ssh key file from the files directory for uploading and used as ssh key.
 ;;  `ovpn_file` is the ovpn file from the files directory for uploading and used as vpn key.
+;;  `tailscale_authkey` is the auth access token to join the CREAMpi on managed tailscale VPN service
 ;;  `mount_phrase` will be used to configure ecryptfs passphrase for folder encryption (DEPRECATED)
 
 [creampi]
-192.168.1.249	 hostname='CREAMpi4b' tunnel_port='2222' monitor_port='0' httpswrapper_port='4443' httpstun_port='2224' 
+192.168.1.249	 hostname='CREAMpi4b' tunnel_port='2222' monitor_port='0' httpswrapper_port='4443' httpstun_port='2224'
 ;192.168.1.250    hostname='CREAMpi5' tunnel_port='2226' monitor_port='0' httpswrapper_port='4443' httpstun_port='2228'
 ;
 ;; mount_phrase is deprecated due to ecryptfs not supported anymore in debian systems
@@ -36,3 +37,4 @@ remote_user='tunnel'
 remote_server='yourdomain.com'
 tunnel_service='ssh'
 key_file='id_rsa'
+tailscale_authkey='tskey-auth-...'
