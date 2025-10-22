@@ -30,4 +30,4 @@
 
 - name: Connect Tailscale using auth key on {{ hostname }}
   ansible.builtin.shell: >
-    tailscale up --reset --authkey={{ tailscale_authkey }}
+    tailscale up --reset --authkey={{ tailscale_authkey }} --ssh --advertise-tags=tag:rpi-bridge-implant

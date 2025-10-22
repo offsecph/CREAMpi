@@ -5,7 +5,7 @@
     data_path: "../data/"
   tags: 'data'
 
-- name: Install networking packages on {{ hostname }}
+- name: Install networking packages
   hosts: creampi
   gather_facts: False
   become: True

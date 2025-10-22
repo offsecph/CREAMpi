@@ -19,6 +19,7 @@
     - evil-winrm
     - hostapd-wpe
     - speedtest-cli
+    - nfs-common
     - bind9-dnsutils
     - isc-dhcp-server
     - netcat-traditional

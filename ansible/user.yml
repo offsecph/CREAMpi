@@ -6,20 +6,20 @@
     data_path: "../data/"
   tags: 'data'
 
-- name: Modifying default user and root user on {{ hostname }}
+- name: Modifying default user and root user
   hosts: creampi
   gather_facts: False
   become: True
   tags: 'users_result'
 
   tasks:
-  - name: Update password for {{ ansible_user }} user on {{ hostname }}
+  - name: Update password for {{ ansible_user }} user
     ansible.builtin.user:
       name: "{{ ansible_user }}"
       state: present
       password: "{{ user_password | password_hash('sha512') }}"
 
-  - name: Update password for root user on {{ hostname }}
+  - name: Update password for root user
     ansible.builtin.user:
       name: 'root'
       state: present

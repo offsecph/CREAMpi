@@ -19,7 +19,7 @@
 ;;  `mount_phrase` will be used to configure ecryptfs passphrase for folder encryption (DEPRECATED)
 
 [creampi]
-192.168.1.110	 hostname='WIN-' tunnel_port='' monitor_port='0' httpswrapper_port='' httpstun_port='' ovpn_file=''
+192.168.1.123	 hostname='' tunnel_port='' monitor_port='0' httpswrapper_port='' httpstun_port='' ovpn_file=''
 ;192.168.1.250    hostname='' tunnel_port='' monitor_port='0' httpswrapper_port='' httpstun_port='' ovpn_file=''
 ;;
 ;;192.168.1.251    hostname='' tunnel_port='' monitor_port='0' httpswrapper_port='' httpstun_port='' mount_phrase='' ovpn_file=''

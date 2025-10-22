@@ -19,11 +19,11 @@
 ;;  `mount_phrase` will be used to configure ecryptfs passphrase for folder encryption (DEPRECATED)
 
 [creampi]
-192.168.1.249	 hostname='CREAMpi4b' tunnel_port='2222' monitor_port='0' httpswrapper_port='4443' httpstun_port='2224'
-;192.168.1.250    hostname='CREAMpi5' tunnel_port='2226' monitor_port='0' httpswrapper_port='4443' httpstun_port='2228'
+192.168.1.249	 hostname='CREAMpi4b' tunnel_port='' monitor_port=''  ovpn_file=''
+;192.168.1.250    hostname='CREAMpi5' tunnel_port='' monitor_port='' ovpn_file=''
 ;
 ;; mount_phrase is deprecated due to ecryptfs not supported anymore in debian systems
-;;192.168.1.251    hostname='' tunnel_port='' monitor_port='0' httpswrapper_port='' httpstun_port='' mount_phrase=''
+;;192.168.1.251    hostname='' tunnel_port='' monitor_port='0' mount_phrase='AnyStrongpassword' ovpn_file=''
 
 ;; [hosts:vars] will use the same configuration for all raspberry pi for provisioning.
 ;; to set a different values per server, remove vars below and align them above along
@@ -33,8 +33,8 @@
 [creampi:vars]
 root_password='yourdesiredrootpassword'
 user_password='yourdesireduserpassword'
-remote_user='tunnel'
-remote_server='yourdomain.com'
-tunnel_service='ssh'
+remote_user=''
+remote_server=''
+tunnel_service=''
 key_file='id_rsa'
-tailscale_authkey=''
+tailscale_authkey='tskey-auth-k85JhumRLk11CNTRL-zNUFnm18xRaFfXpK2iz3RaaTxVV4qDn31'

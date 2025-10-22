@@ -5,7 +5,7 @@
     data_path: "../data/"
   tags: 'data'
 
-- name: Install utility packages on {{ hostname }}
+- name: Install utility packages
   hosts: creampi
   gather_facts: False
   become: True

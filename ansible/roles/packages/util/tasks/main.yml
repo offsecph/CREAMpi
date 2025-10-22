@@ -18,6 +18,7 @@
       - unzip
       - unrar
       - chafa
+      - gnupg
       - lolcat
       - hashcat
       - bsdutils

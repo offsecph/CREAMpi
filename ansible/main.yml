@@ -15,32 +15,32 @@
   tags: 'data'
 
 ## System configuration ------
-- import_playbook: apt.yml
-- import_playbook: scripts.yml
-- import_playbook: host.yml
-- import_playbook: misc.yml
+# - import_playbook: apt.yml
+# - import_playbook: scripts.yml
+# - import_playbook: host.yml
+# - import_playbook: misc.yml
 ## Packages ------
 # Consists of required packages
 # to operate in a minimalistic manner
 # using common tools and dependencies needed
-- import_playbook: lib.yml
-- import_playbook: devel.yml
-- import_playbook: net.yml
-- import_playbook: util.yml
+# - import_playbook: lib.yml
+# - import_playbook: devel.yml
+# - import_playbook: net.yml
+# - import_playbook: util.yml
 # devel tools
-- import_playbook: go.yml
-- import_playbook: rust.yml
-- import_playbook: pip2.yml
+# - import_playbook: go.yml
+# - import_playbook: rust.yml
+# - import_playbook: pip2.yml
 ## Service installation ------
 # Security configuration and other utilities
 # needed to function the pi server
 # - import_playbook: ecrypt.yml      ### deprecated from debian repository
-- import_playbook: iptables.yml
-- import_playbook: knockd.yml
-- import_playbook: resolved.yml
-- import_playbook: sshd.yml
-- import_playbook: timesyncd.yml
-- import_playbook: httpswrapper.yml
+# - import_playbook: iptables.yml
+# - import_playbook: knockd.yml
+# - import_playbook: resolved.yml
+# - import_playbook: sshd.yml
+# - import_playbook: timesyncd.yml
+# - import_playbook: httpswrapper.yml
 - import_playbook: tailscaled.yml
 - import_playbook: sshtun.yml
 - import_playbook: vpntun.yml
